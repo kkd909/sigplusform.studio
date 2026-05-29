@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billing Intelligence — Interactive Design Explorer</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:         #0f1117;
+  --canvas:      #f4f4f6;
+  --surface:     #ffffff;
+  --rule:        #e2e4e9;
+  --muted:       #6b7280;
+  --muted-light: #9ca3af;
+  --chrome-dark: #16181d;
+  --sidebar-bg:  #1e2028;
+  --surface-mid: #252830;
+  --rule-dark:   #2e3139;
+
+  /* CS2 sky brand */
+  --accent:      #38bdf8;
+  --accent-soft: #f0f9ff;
+  --accent-mid:  #bae6fd;
+  --accent-text: #0369a1;
+  --accent-dark: #0c2a3d;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+}
+
+/* ── HEADER ───────────────────────────────────────────────── */
+.page-header {
+  background: var(--sidebar-bg);
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule-dark);
+}
+.page-header-left { display: flex; align-items: baseline; gap: 1rem; }
+.wordmark {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 1.35rem;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+.wordmark span { color: var(--accent); }
+.page-subtitle {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted-light);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.back-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted-light);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--rule-dark);
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+.back-link:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── STEP NAV ─────────────────────────────────────────────── */
+.step-nav {
+  background: var(--chrome-dark);
+  border-bottom: 1px solid var(--rule-dark);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+}
+.step-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--muted-light);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 1rem 0 0;
+  border-right: 1px solid var(--rule-dark);
+  margin-right: 0.5rem;
+  white-space: nowrap;
+  line-height: 3rem;
+}
+.step-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0 1.25rem;
+  height: 3rem;
+  border: none;
+  background: transparent;
+  color: var(--muted-light);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.step-btn:hover { color: #fff; }
+.step-btn.active {
+  color: #fff;
+  border-bottom-color: var(--accent);
+  font-weight: 500;
+}
+.step-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--rule-dark);
+  display: inline-block;
+  margin-right: 0.5rem;
+  transition: background 0.2s;
+}
+.step-btn.active .step-dot { background: var(--accent); }
+
+/* ── MAIN LAYOUT ──────────────────────────────────────────── */
+.main {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 0;
+}
+
+/* ── SIDEBAR ──────────────────────────────────────────────── */
+.sidebar {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--rule-dark);
+  padding: 1.5rem 1.25rem;
+  overflow-y: auto;
+}
+.sidebar-section { margin-bottom: 1.75rem; }
+.sidebar-heading {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--muted-light);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--rule-dark);
+}
+.sidebar-title {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 0.3rem;
+  line-height: 1.3;
+}
+.sidebar-desc {
+  font-size: 0.78rem;
+  color: var(--muted-light);
+  line-height: 1.55;
+}
+
+/* Step list */
+.step-list { display: flex; flex-direction: column; gap: 0.35rem; }
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: 1px solid transparent;
+}
+.step-item:hover { background: #252830; }
+.step-item.active {
+  background: var(--accent-dark);
+  border-color: var(--accent);
+}
+.step-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted-light);
+  padding-top: 0.1rem;
+  min-width: 1rem;
+}
+.step-item.active .step-num { color: var(--accent); }
+.step-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  color: #fff;
+  margin-bottom: 0.1rem;
+}
+.step-item:not(.active) .step-name { color: var(--muted-light); }
+.step-item.active .step-name { color: #fff; }
+.step-caption { font-size: 0.65rem; color: var(--muted-light); line-height: 1.4; }
+
+/* ── Guided insight tour ─────────────────────────────────── */
+
+/* Callout overlay — first insight, above fold on the screenshot */
+.insight-callout {
+  position: absolute;
+  bottom: 12px;
+  left: 16px;
+  right: 16px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+.insight-callout.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.insight-callout-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.insight-callout-text {
+  font-size: 0.7rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+
+/* Scroll hint arrow — floats at bottom of viewport */
+.scroll-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  z-index: 100;
+}
+.scroll-hint.visible { opacity: 1; }
+.scroll-hint-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.scroll-hint-arrow {
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounceDown 1.5s ease-in-out infinite;
+}
+.scroll-hint-arrow::after {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid var(--accent);
+  border-bottom: 1.5px solid var(--accent);
+  transform: rotate(45deg) translateY(-2px);
+}
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+.annotation.active-insight {
+  border-left-color: #38bdf8 !important;
+  box-shadow: 0 0 0 2px rgba(56,189,248,0.2), 0 1px 3px rgba(0,0,0,0.06) !important;
+  animation: pulseInsight 2s ease-in-out infinite !important;
+  outline: none;
+}
+@keyframes pulseInsight {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(56,189,248,0.2), 0 1px 3px rgba(0,0,0,0.06); border-left-color: #38bdf8; }
+  50% { box-shadow: 0 0 0 5px rgba(56,189,248,0.35), 0 1px 3px rgba(0,0,0,0.06); border-left-color: #7dd3fc; }
+}
+/* Governance panel */
+.gov-card {
+  background: var(--accent-dark);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.gov-card-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+.gov-card-text { font-size: 0.7rem; color: #cbd5e1; line-height: 1.5; }
+
+.signal-list { display: flex; flex-direction: column; gap: 0.3rem; }
+.signal-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  background: #252830;
+  border-radius: 3px;
+  border-left: 2px solid var(--rule-dark);
+}
+.signal-item.active-signal { border-left-color: var(--accent); }
+.signal-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--rule-dark); flex-shrink: 0; }
+.signal-item.active-signal .signal-dot { background: var(--accent); }
+.signal-text { font-size: 0.65rem; color: var(--muted-light); }
+.signal-item.active-signal .signal-text { color: #cbd5e1; }
+
+/* ── CONTENT AREA ─────────────────────────────────────────── */
+.content {
+  overflow-y: auto;
+  background: #f0f4f8;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Step panels */
+.step-panel { display: none; flex-direction: column; height: 100%; }
+.step-panel.active { display: flex; }
+
+.panel-header {
+  background: #fff;
+  border-bottom: 1px solid var(--rule);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.panel-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--accent-text);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+.panel-title {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+.panel-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+.panel-nav-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.panel-nav-btn:hover { border-color: var(--accent); color: var(--accent-text); }
+.panel-nav-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-dark);
+  font-weight: 500;
+}
+.panel-nav-btn.primary:hover { background: #7dd3fc; }
+.panel-nav-btn:disabled { opacity: 0.35; cursor: default; }
+.panel-nav-btn:disabled:hover { border-color: var(--rule); color: var(--muted); }
+
+/* Screenshot container */
+.screenshot-wrap {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+.screenshot-wrap img {
+  width: 100%;
+  max-width: 900px;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+  display: block;
+}
+
+/* Annotation strip */
+.annotation-strip {
+  width: 100%;
+  max-width: 900px;
+  display: grid;
+  gap: 0.5rem;
+}
+.annotation {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.6rem 0.85rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: border-left-color 0.3s ease, box-shadow 0.3s ease;
+}
+.annotation-icon {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border-radius: 2px;
+  padding: 0.1rem 0.3rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+.annotation-text { font-size: 0.75rem; color: #374151; line-height: 1.5; }
+.annotation-text strong { color: var(--ink); }
+
+/* ── PROGRESS BAR ─────────────────────────────────────────── */
+.progress-bar {
+  height: 2px;
+  background: var(--rule-dark);
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+}
+
+/* ── Hotspot highlight overlay ───────────────────────────────────────────── */
+.img-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+}
+.img-wrap img {
+  width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+  display: block;
+}
+.hotspot-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.hotspot-overlay.visible { opacity: 1; }
+
+/* The vignette is a radial gradient — transparent in the hotspot, dark outside */
+.hotspot-highlight {
+  position: absolute;
+  border: 2px solid rgba(56,189,248,0.8);
+  border-radius: 4px;
+  box-shadow: 0 0 0 2000px rgba(15,23,42,0.55);
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+/* Callout bubble positioned next to hotspot */
+.hotspot-callout {
+  position: absolute;
+  background: rgba(15,23,42,0.96);
+  border: 1px solid #38bdf8;
+  border-radius: 6px;
+  padding: 10px 14px;
+  max-width: 240px;
+  min-width: 200px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+  z-index: 20;
+}
+.hotspot-callout.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hotspot-callout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  gap: 8px;
+}
+.hotspot-callout-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: #38bdf8;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hotspot-callout-progress {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: rgba(56,189,248,0.6);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.hotspot-callout-text {
+  font-size: 0.68rem;
+  color: #e2e8f0;
+  line-height: 1.55;
+}
+.hotspot-callout-text strong { color: #fff; }
+
+/* ── Insight legend bar ──────────────────────────────────────────────────── */
+.insight-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.legend-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: 4px;
+  white-space: nowrap;
+}
+.legend-items {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--rule);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: #f8fafc;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+.legend-item.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(56,189,248,0.06);
+}
+.legend-item.done {
+  border-color: #94a3b8;
+  color: #64748b;
+  background: #f1f5f9;
+}
+.legend-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+.legend-counter {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.replay-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 3px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.replay-btn:hover {
+  background: rgba(56,189,248,0.08);
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="page-header">
+  <div class="page-header-left">
+    <div class="wordmark">Billing<span>Intelligence</span></div>
+    <div class="page-subtitle">Interactive Design Explorer · CS2</div>
+  </div>
+  <a href="index.html#cs2" class="back-link">← Back to Case Study</a>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width:25%"></div>
+</div>
+
+<!-- STEP NAV -->
+<nav class="step-nav">
+  <span class="step-label">Workflow</span>
+  <button class="step-btn active" onclick="goToStep(0)" id="nav0">
+    <span class="step-dot"></span>01 — Calm Default
+  </button>
+  <button class="step-btn" onclick="goToStep(1)" id="nav1">
+    <span class="step-dot"></span>02 — Signal Detected
+  </button>
+  <button class="step-btn" onclick="goToStep(2)" id="nav2">
+    <span class="step-dot"></span>03 — Matter Detail
+  </button>
+  <button class="step-btn" onclick="goToStep(3)" id="nav3">
+    <span class="step-dot"></span>04 — Draft Surfaced
+  </button>
+  <button class="step-btn" onclick="goToStep(4)" id="nav4">
+    <span class="step-dot"></span>05 — Motion System
+  </button>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-heading">About this explorer</div>
+      <div class="sidebar-title">The attorney decision loop</div>
+      <div class="sidebar-desc" style="margin-top:0.4rem">Four states show how the system moves from calm monitoring to AI-prepared action — without ever committing on behalf of the attorney.</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-heading">Workflow Steps</div>
+      <div class="step-list">
+        <div class="step-item active" onclick="goToStep(0)" id="side0">
+          <span class="step-num">01</span>
+          <div class="step-info">
+            <div class="step-name">Calm Default</div>
+            <div class="step-caption">Dashboard in resting state — signals monitored, no threshold crossed</div>
+          </div>
+        </div>
+        <div class="step-item" onclick="goToStep(1)" id="side1">
+          <span class="step-num">02</span>
+          <div class="step-info">
+            <div class="step-name">Signal Detected</div>
+            <div class="step-caption">3 signals converge — AI surfaces alert, attorney remains in control</div>
+          </div>
+        </div>
+        <div class="step-item" onclick="goToStep(2)" id="side2">
+          <span class="step-num">03</span>
+          <div class="step-info">
+            <div class="step-name">Matter Detail</div>
+            <div class="step-caption">Attorney drills into Employment Dispute — billing trend, aging, timeline visible</div>
+          </div>
+        </div>
+        <div class="step-item" onclick="goToStep(3)" id="side3">
+          <span class="step-num">04</span>
+          <div class="step-info">
+            <div class="step-name">Draft Surfaced</div>
+            <div class="step-caption">AI prepares communication — attorney edits, dismisses, or defers</div>
+          </div>
+        </div>
+        <div class="step-item" onclick="goToStep(4)" id="side4">
+          <span class="step-num">05</span>
+          <div class="step-info">
+            <div class="step-name">Motion System</div>
+            <div class="step-caption">Token-driven state transitions — duration and easing as governance decisions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-heading">Governance Model</div>
+      <div class="gov-card">
+        <div class="gov-card-label">✓ AI is allowed to</div>
+        <div class="gov-card-text">Surface converging signals · compress context into a single view · prepare a draft communication · intervene at threshold</div>
+      </div>
+      <div class="gov-card" style="background:#1a0a0a;border-color:#7f1d1d">
+        <div class="gov-card-label" style="color:#fca5a5">✗ AI is not allowed to</div>
+        <div class="gov-card-text">Send client communications · determine tone autonomously · escalate without attorney approval · act on incomplete context</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-heading">Active Signals — Matter 2887</div>
+      <div class="signal-list" id="signalList">
+        <div class="signal-item" id="sig0">
+          <div class="signal-dot"></div>
+          <div class="signal-text">Invoice aging 90+ days</div>
+        </div>
+        <div class="signal-item" id="sig1">
+          <div class="signal-dot"></div>
+          <div class="signal-text">Communication gap 43 days</div>
+        </div>
+        <div class="signal-item" id="sig2">
+          <div class="signal-dot"></div>
+          <div class="signal-text">Billing trend declining</div>
+        </div>
+        <div class="signal-item" id="sig3">
+          <div class="signal-dot"></div>
+          <div class="signal-text">Draft communication prepared</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- STEP 0: Calm Default -->
+    <div class="step-panel active" id="panel0">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-eyebrow">Step 01 of 04 · Calm Default State</div>
+          <div class="panel-title">Dashboard — No Threshold Crossed</div>
+        </div>
+        <div class="panel-nav">
+          <button class="panel-nav-btn" disabled>← Previous</button>
+          <button class="panel-nav-btn primary" onclick="goToStep(1)">Signal Detected →</button>
+        </div>
+      </div>
+      <div class="insight-legend" id="legend-bar-0">
+        <span class="legend-label">Insights</span>
+        <div class="legend-items">
+      <div class="legend-item" id="legend-0-0"><span class="legend-dot"></span>Design</div>
+      <div class="legend-item" id="legend-0-1"><span class="legend-dot"></span>System</div>
+        </div>
+        <span class="legend-counter" id="legend-counter-0">1 of 2</span>
+        <button class="replay-btn" onclick="replayFromStart()">&#8635; Replay All</button>
+      </div>
+                  <div class="screenshot-wrap">
+        <div class="annotation-strip">
+          <div class="annotation" id="ann-0-0">
+            <span class="annotation-icon">Design</span>
+            <div class="annotation-text"><strong>Calm by default.</strong> The dashboard surfaces the work queue and billing metrics without urgency signals. Attorneys can orient to their caseload without the system demanding attention. No alerts until threshold is crossed.</div>
+          </div>
+          <div class="annotation" id="ann-0-1">
+            <span class="annotation-icon">System</span>
+            <div class="annotation-text"><strong>Continuous monitoring, silent aggregation.</strong> Signals from email threads, billing records, documents, and matter status are being watched — but the interface stays quiet. The AI earns the right to interrupt.</div>
+          </div>
+        </div>
+        <div class="img-wrap">
+          <img src="assets/images/billing-draft.png" alt="LegalOps billing dashboard in calm default state — work queue visible, no alerts surfaced">
+          <div class="hotspot-overlay" id="overlay-0">
+            <div class="hotspot-highlight" id="highlight-0"></div>
+            <div class="hotspot-callout" id="callout-0"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <!-- STEP 1: Signal Detected -->
+    <div class="step-panel" id="panel1">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-eyebrow">Step 02 of 04 · Signal Detected</div>
+          <div class="panel-title">3 Signals Converge — Alert Surfaced</div>
+        </div>
+        <div class="panel-nav">
+          <button class="panel-nav-btn" onclick="goToStep(0)">← Calm Default</button>
+          <button class="panel-nav-btn primary" onclick="goToStep(2)">Matter Detail →</button>
+        </div>
+      </div>
+      <div class="insight-legend" id="legend-bar-1">
+        <span class="legend-label">Insights</span>
+        <div class="legend-items">
+      <div class="legend-item" id="legend-1-0"><span class="legend-dot"></span>Design</div>
+      <div class="legend-item" id="legend-1-1"><span class="legend-dot"></span>Hierarchy</div>
+      <div class="legend-item" id="legend-1-2"><span class="legend-dot"></span>Governance</div>
+        </div>
+        <span class="legend-counter" id="legend-counter-1">1 of 3</span>
+        <button class="replay-btn" onclick="replayFromStart()">&#8635; Replay All</button>
+      </div>
+                  <div class="screenshot-wrap">
+        <div class="annotation-strip">
+          <div class="annotation" id="ann-1-0">
+            <span class="annotation-icon">Design</span>
+            <div class="annotation-text"><strong>Threshold-based intervention.</strong> The AI surfaces the alert only when signals converge — not on every data point. The banner reads as informational, not alarming. The attorney decides what to do next.</div>
+          </div>
+          <div class="annotation" id="ann-1-1">
+            <span class="annotation-icon">Hierarchy</span>
+            <div class="annotation-text"><strong>Calm-by-default hierarchy preserved.</strong> The alert sits above the work queue without displacing it. Urgency is legible without being coercive — the attorney's mental model of their caseload isn't disrupted.</div>
+          </div>
+          <div class="annotation" id="ann-1-2">
+            <span class="annotation-icon">Governance</span>
+            <div class="annotation-text"><strong>No automatic action.</strong> The system flagged 3 matters. It did not escalate them, reassign them, or send any communication. It surfaced context for the attorney to act on.</div>
+          </div>
+        </div>
+        <div class="img-wrap">
+          <img src="assets/images/billing-dashboard-alert.png" alt="LegalOps dashboard with AI alert surfaced — 3 matters require attention, invoices aging, communication gap">
+          <div class="hotspot-overlay" id="overlay-1">
+            <div class="hotspot-highlight" id="highlight-1"></div>
+            <div class="hotspot-callout" id="callout-1"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <!-- STEP 2: Matter Detail -->
+    <div class="step-panel" id="panel2">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-eyebrow">Step 03 of 04 · Matter Detail</div>
+          <div class="panel-title">Employment Dispute - Harris — Signals Reviewed</div>
+        </div>
+        <div class="panel-nav">
+          <button class="panel-nav-btn" onclick="goToStep(1)">← Signal Detected</button>
+          <button class="panel-nav-btn primary" onclick="goToStep(3)">Draft Surfaced →</button>
+        </div>
+      </div>
+      <div class="insight-legend" id="legend-bar-2">
+        <span class="legend-label">Insights</span>
+        <div class="legend-items">
+      <div class="legend-item" id="legend-2-0"><span class="legend-dot"></span>Design</div>
+      <div class="legend-item" id="legend-2-1"><span class="legend-dot"></span>Action</div>
+      <div class="legend-item" id="legend-2-2"><span class="legend-dot"></span>Hierarchy</div>
+        </div>
+        <span class="legend-counter" id="legend-counter-2">1 of 3</span>
+        <button class="replay-btn" onclick="replayFromStart()">&#8635; Replay All</button>
+      </div>
+                  <div class="screenshot-wrap">
+        <div class="annotation-strip">
+          <div class="annotation" id="ann-2-0">
+            <span class="annotation-icon">Design</span>
+            <div class="annotation-text"><strong>Compressed context in one view.</strong> The panel surfaces billing trend, invoice aging (90+ days, $48K outstanding), communication gap (43 days vs. 12-day average), and a full matter timeline — previously requiring cross-referencing four systems.</div>
+          </div>
+          <div class="annotation" id="ann-2-1">
+            <span class="annotation-icon">Action</span>
+            <div class="annotation-text"><strong>"Prepare Communication" — not "Send."</strong> The primary CTA initiates AI draft preparation, not delivery. The word choice is deliberate — it signals that a human step remains between this moment and any client-facing action.</div>
+          </div>
+          <div class="annotation" id="ann-2-2">
+            <span class="annotation-icon">Hierarchy</span>
+            <div class="annotation-text"><strong>Progressive disclosure.</strong> The detail panel opens alongside the work queue — the attorney never loses their place in the dashboard. Context surfaces without navigation away from the primary workflow.</div>
+          </div>
+        </div>
+        <div class="img-wrap">
+          <img src="assets/images/billing-matter-panel.png" alt="LegalOps matter detail panel — billing trend, invoice aging, communication gap, Prepare Communication CTA">
+          <div class="hotspot-overlay" id="overlay-2">
+            <div class="hotspot-highlight" id="highlight-2"></div>
+            <div class="hotspot-callout" id="callout-2"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <!-- STEP 3: Draft Surfaced -->
+    <div class="step-panel" id="panel3">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-eyebrow">Step 04 of 04 · Draft Surfaced</div>
+          <div class="panel-title">AI-Prepared Communication — Attorney Decides</div>
+        </div>
+        <div class="panel-nav">
+          <button class="panel-nav-btn" onclick="goToStep(2)">← Matter Detail</button>
+          <button class="panel-nav-btn" onclick="goToStep(0)" style="border-color:#38bdf8;color:#0369a1">↺ Restart Flow</button>
+        </div>
+      </div>
+      <div class="insight-legend" id="legend-bar-3">
+        <span class="legend-label">Insights</span>
+        <div class="legend-items">
+      <div class="legend-item" id="legend-3-0"><span class="legend-dot"></span>Governance</div>
+      <div class="legend-item" id="legend-3-1"><span class="legend-dot"></span>Design</div>
+      <div class="legend-item" id="legend-3-2"><span class="legend-dot"></span>System</div>
+        </div>
+        <span class="legend-counter" id="legend-counter-3">1 of 3</span>
+        <button class="replay-btn" onclick="replayFromStart()">&#8635; Replay All</button>
+      </div>
+                  <div class="screenshot-wrap">
+        <div class="annotation-strip">
+          <div class="annotation" id="ann-3-0">
+            <span class="annotation-icon">Governance</span>
+            <div class="annotation-text"><strong>Four equal paths.</strong> Dismiss · Remind Later · Edit Draft · Send. No path is visually privileged over another. The attorney retains full authority over timing, tone, and intent.</div>
+          </div>
+          <div class="annotation" id="ann-3-1">
+            <span class="annotation-icon">Design</span>
+            <div class="annotation-text"><strong>Tone controls without autonomy.</strong> "More Formal / Add Urgency / Softer Tone" let the attorney adjust register — but the system cannot select tone on its own. Tone is a relational judgment that stays human-owned.</div>
+          </div>
+          <div class="annotation" id="ann-3-2">
+            <span class="annotation-icon">System</span>
+            <div class="annotation-text"><strong>The footer says it plainly.</strong> "AI prepares a draft communication, but never sends it. Attorneys retain full control over timing, tone, and intent." The governance model made visible — not buried in documentation.</div>
+          </div>
+        </div>
+        <div class="img-wrap">
+          <img src="assets/images/billing-dashboard-calm.png" alt="LegalOps draft communication view — AI-prepared email, tone controls, Dismiss / Remind Later / Edit Draft / Send options">
+          <div class="hotspot-overlay" id="overlay-3">
+            <div class="hotspot-highlight" id="highlight-3"></div>
+            <div class="hotspot-callout" id="callout-3"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <div class="step-panel" id="panel4">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <div class="panel-eyebrow">Billing Intelligence — Motion &amp; State</div>
+          <div class="panel-title">Token-Driven State Transitions</div>
+        </div>
+        <div class="panel-nav">
+          <button class="panel-nav-btn" onclick="goToStep(3)">&#8592; Draft Surfaced</button>
+          <button class="panel-nav-btn" onclick="bssSetState('calm')" style="border-color:#38bdf8;color:#0369a1">&#8635; Reset Demo</button>
+        </div>
+      </div>
+      <div style="flex:1;overflow:auto;background:#16181d;padding:24px;">
+        <div style="max-width:560px;margin:0 auto 24px;font-family:system-ui,sans-serif;">
+          <p style="font-size:11px;letter-spacing:0.1em;font-weight:700;color:#9ca3af;margin-bottom:8px;">MOTION TOKEN SYSTEM</p>
+          <p style="font-size:13px;color:#9ca3af;line-height:1.6;">State transitions are governed by motion tokens. Duration and easing are design decisions that communicate urgency level to the attorney.</p>
+        </div>
+        <style>
+          .bss-dashboard{background:rgba(17,24,39,0.95);border:1px solid #2e3139;border-radius:10px;overflow:hidden;transition:background 300ms ease-out,border-color 300ms ease-out}
+          .bss-header{padding:14px 16px;border-bottom:1px solid #2e3139;display:flex;align-items:center;justify-content:space-between}
+          .bss-row{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:12px;padding:10px 16px;border-left:2px solid transparent;transition:background 300ms ease-out,border-color 300ms ease-out}
+          .bss-signal-panel{overflow:hidden;max-height:0;opacity:0;transition:max-height 300ms ease-out,opacity 300ms ease-out}
+          .bss-signal-panel.open{max-height:400px;opacity:1}
+          .bss-signal-panel.open-alert{max-height:400px;opacity:1;transition:max-height 180ms ease-in,opacity 180ms ease-in}
+          .bss-dot{width:8px;height:8px;border-radius:50%;background:#374151;flex-shrink:0;transition:background 300ms ease-out,transform 300ms ease-out,box-shadow 300ms ease-out}
+          .bss-state-btn{padding:6px 14px;font-size:11px;font-weight:700;letter-spacing:0.08em;background:transparent;border:1px solid #2e3139;color:#9ca3af;border-radius:4px;cursor:pointer;transition:all 200ms ease;font-family:monospace}
+          .bss-auto-btn{padding:5px 14px;font-size:11px;font-weight:700;background:transparent;border:1px solid #2e3139;color:#9ca3af;border-radius:4px;cursor:pointer;font-family:monospace}
+          .bss-token-box{margin-top:12px;padding:10px 14px;background:rgba(17,24,39,0.6);border:1px solid #2e3139;border-radius:6px}
+          .bss-token-grid{margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+          .bss-token-card{padding:8px 10px;background:#1e2028;border:1px solid #2e3139;border-radius:4px}
+        </style>
+        <div class="bss-dashboard" id="bss-dash" style="max-width:560px;margin:0 auto;">
+          <div class="bss-header">
+            <div>
+              <div id="bss-title" style="font-size:11px;font-weight:700;letter-spacing:0.08em;color:#e5e7eb;font-family:monospace;transition:color 300ms ease-out;">CLIENT HEALTH</div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:1px;font-family:monospace;">Apr 11, 2026</div>
+            </div>
+            <div id="bss-status" style="font-size:11px;letter-spacing:0.08em;font-weight:700;color:#9ca3af;font-family:monospace;transition:color 300ms ease-out;">ALL CLEAR</div>
+          </div>
+          <div class="bss-row">
+            <div>
+              <div style="font-size:12px;font-weight:500;color:#e5e7eb;font-family:monospace;">Westbrook Capital</div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Series C Due Diligence</div>
+            </div>
+            <div style="font-size:12px;font-weight:500;color:#9ca3af;font-family:monospace;">$284,000</div>
+            <div class="bss-dot"></div>
+          </div>
+          <div class="bss-row" id="bss-risk-row">
+            <div>
+              <div id="bss-risk-client" style="font-size:12px;font-weight:500;color:#e5e7eb;font-family:monospace;transition:color 300ms ease-out;">Richardson &amp; Apex</div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Contract Dispute &#8212; Phase II</div>
+            </div>
+            <div id="bss-risk-amount" style="font-size:12px;font-weight:500;color:#9ca3af;font-family:monospace;transition:color 300ms ease-out;">$847,200</div>
+            <div class="bss-dot" id="bss-risk-dot"></div>
+          </div>
+          <div class="bss-signal-panel" id="bss-signal-panel">
+            <div style="margin:0 16px 12px;padding:12px;background:rgba(17,24,39,0.8);border:1px solid rgba(245,158,11,0.2);border-radius:6px;" id="bss-signal-inner">
+              <div id="bss-signal-title" style="font-size:11px;letter-spacing:0.08em;font-weight:700;color:#f59e0b;margin-bottom:6px;font-family:monospace;">SIGNALS DETECTED</div>
+              <div style="font-size:11px;color:#9ca3af;margin-bottom:3px;">&#9656; Invoice aging 47 days</div>
+              <div style="font-size:11px;color:#9ca3af;margin-bottom:3px;">&#9656; No client response &#8212; 12 days</div>
+              <div style="font-size:11px;color:#9ca3af;margin-bottom:10px;">&#9656; Billing rate dispute flagged</div>
+              <div id="bss-draft" style="display:none;">
+                <div style="font-size:11px;letter-spacing:0.08em;font-weight:700;color:#9ca3af;margin-bottom:6px;font-family:monospace;">AI-DRAFTED COMMUNICATION</div>
+                <div style="font-size:11px;color:#9ca3af;line-height:1.6;border-left:2px solid #374151;padding-left:8px;font-style:italic;margin-bottom:10px;">Dear Ms. Richardson, I wanted to follow up regarding the outstanding invoice dated March 14th. Our records indicate the balance of $847,200 remains unpaid. I would welcome a call to discuss any concerns before further escalation.</div>
+                <div style="display:flex;gap:6px;">
+                  <button style="padding:5px 12px;font-size:11px;font-weight:500;background:transparent;border:1px solid #374151;color:#9ca3af;border-radius:4px;cursor:pointer;">Dismiss</button>
+                  <button style="padding:5px 12px;font-size:11px;font-weight:600;background:#1d4ed8;border:1px solid #2563eb;color:#fff;border-radius:4px;cursor:pointer;">Prepare Communication &#8594;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bss-row">
+            <div>
+              <div style="font-size:12px;font-weight:500;color:#e5e7eb;font-family:monospace;">Meridian Holdings</div>
+              <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Acquisition &#8212; NDA Review</div>
+            </div>
+            <div style="font-size:12px;font-weight:500;color:#9ca3af;font-family:monospace;">$62,400</div>
+            <div class="bss-dot"></div>
+          </div>
+        </div>
+        <div class="bss-token-box" style="max-width:560px;margin:12px auto 0;">
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+            <span id="bss-token-name" style="font-size:11px;color:#9ca3af;font-weight:700;font-family:monospace;">--duration-calm</span>
+            <span style="font-size:11px;color:#9ca3af;font-family:monospace;">: <span id="bss-token-value">0ms</span></span>
+          </div>
+          <div id="bss-token-note" style="font-size:11px;color:#9ca3af;line-height:1.5;">Stillness is the default. Motion in a calm state creates noise.</div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:16px;">
+          <button class="bss-state-btn" id="bss-btn-calm" onclick="bssSetState('calm')">CALM</button>
+          <button class="bss-state-btn" id="bss-btn-signal" onclick="bssSetState('signal')">SIGNAL</button>
+          <button class="bss-state-btn" id="bss-btn-alert" onclick="bssSetState('alert')">ALERT</button>
+        </div>
+        <div style="display:flex;justify-content:center;margin-top:10px;">
+          <button class="bss-auto-btn" id="bss-auto-btn" onclick="bssToggleAuto()">&#9654; AUTOPLAY SEQUENCE</button>
+        </div>
+        <div class="bss-token-grid" style="max-width:560px;margin:16px auto 0;">
+          <div class="bss-token-card">
+            <div style="font-size:11px;color:#9ca3af;font-family:monospace;margin-bottom:3px;font-weight:700;">--duration-calm</div>
+            <div style="font-size:12px;color:#e5e7eb;font-family:monospace;font-weight:600;">0ms</div>
+            <div style="font-size:11px;color:#9ca3af;margin-top:2px;">No transition</div>
+          </div>
+          <div class="bss-token-card">
+            <div style="font-size:11px;color:#f59e0b;font-family:monospace;margin-bottom:3px;font-weight:700;">--duration-signal</div>
+            <div style="font-size:12px;color:#e5e7eb;font-family:monospace;font-weight:600;">300ms</div>
+            <div style="font-size:11px;color:#9ca3af;margin-top:2px;">ease-out</div>
+          </div>
+          <div class="bss-token-card">
+            <div style="font-size:11px;color:#ef4444;font-family:monospace;margin-bottom:3px;font-weight:700;">--duration-alert</div>
+            <div style="font-size:12px;color:#e5e7eb;font-family:monospace;font-weight:600;">180ms</div>
+            <div style="font-size:11px;color:#9ca3af;margin-top:2px;">ease-in</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+const STEPS = 5;
+let current = 0;
+
+// DEBUG: click any screenshot to log percentage coordinates
+document.addEventListener('click', function(e) {
+  const wrap = e.target.closest('.img-wrap');
+  if (!wrap) return;
+  const rect = wrap.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+  const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+  console.log('HOTSPOT COORDS — left: ' + x + ', top: ' + y);
+  alert('left: ' + x + '%,  top: ' + y + '%');
+});
+
+
+function goToStep(n) {
+  // Deactivate all
+  for (let i = 0; i < STEPS; i++) {
+    const p = document.getElementById('panel' + i);
+    const nav = document.getElementById('nav' + i);
+    const side = document.getElementById('side' + i);
+    if (p) p.classList.remove('active');
+    if (nav) nav.classList.remove('active');
+    if (side) side.classList.remove('active');
+  }
+
+  // Activate target
+  const targetPanel = document.getElementById('panel' + n);
+  const targetNav = document.getElementById('nav' + n);
+  const targetSide = document.getElementById('side' + n);
+  if (targetPanel) targetPanel.classList.add('active');
+  if (targetNav) targetNav.classList.add('active');
+  if (targetSide) targetSide.classList.add('active');
+
+  // Progress bar
+  document.getElementById('progressFill').style.width = ((n + 1) / STEPS * 100) + '%';
+
+  // Activate signals progressively
+  for (let i = 0; i < STEPS; i++) {
+    const sig = document.getElementById('sig' + i);
+    if (sig) {
+      if (i <= n) {
+        sig.classList.add('active-signal');
+      } else {
+        sig.classList.remove('active-signal');
+      }
+    }
+  }
+
+  current = n;
+
+  // Reset all scroll containers on tab change
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  document.querySelector('.content').scrollTop = 0;
+  const panelEl = document.getElementById('panel' + n);
+  if (panelEl) { const sw = panelEl.querySelector('.screenshot-wrap'); if (sw) sw.scrollTop = 0; }
+
+  // Reset and replay insight tour
+  if (typeof clearTourTimers === 'function') {
+    clearTourTimers();
+    for (let i = 0; i < STEPS; i++) { if (typeof hideHotspot === 'function') hideHotspot(i); }
+    setTimeout(() => { if (typeof initInsightTour === 'function') initInsightTour(n); }, 300);
+  }
+}
+
+
+let bssState = 'calm';
+let bssAutoTimer = null;
+const BSS_ANN = {
+  calm:   {name:'--duration-calm',  value:'0ms',           note:'Stillness is the default. Motion in a calm state creates noise.',color:'#9ca3af'},
+  signal: {name:'--duration-signal',value:'300ms ease-out',note:'Decelerates into attention. Deliberate, not reactive.',color:'#f59e0b'},
+  alert:  {name:'--duration-alert', value:'180ms ease-in', note:'Accelerates - speed communicates urgency.',color:'#ef4444'},
+};
+function bssSetState(state) {
+  bssState = state;
+  const dash=document.getElementById('bss-dash');
+  if(!dash) return;
+  const rr=document.getElementById('bss-risk-row');
+  const rc=document.getElementById('bss-risk-client');
+  const ra=document.getElementById('bss-risk-amount');
+  const rd=document.getElementById('bss-risk-dot');
+  const sp=document.getElementById('bss-signal-panel');
+  const si=document.getElementById('bss-signal-inner');
+  const st=document.getElementById('bss-signal-title');
+  const dr=document.getElementById('bss-draft');
+  const ti=document.getElementById('bss-title');
+  const ss=document.getElementById('bss-status');
+  const ann=BSS_ANN[state];
+  if(state==='calm'){
+    dash.style.cssText='background:rgba(17,24,39,0.95);border:1px solid #2e3139;border-radius:10px;overflow:hidden;box-shadow:none;transition:background 300ms ease-out,border-color 300ms ease-out';
+    rr.style.background='transparent';rr.style.borderLeftColor='transparent';
+    rc.style.color='#e5e7eb';ra.style.color='#9ca3af';
+    rd.style.background='#374151';rd.style.transform='scale(1)';rd.style.boxShadow='none';
+    ti.style.color='#e5e7eb';ss.style.color='#9ca3af';ss.textContent='ALL CLEAR';
+    sp.className='bss-signal-panel';dr.style.display='none';
+  } else if(state==='signal'){
+    dash.style.cssText='background:rgba(24,20,0,0.97);border:1px solid rgba(245,158,11,0.15);border-radius:10px;overflow:hidden;box-shadow:0 0 30px rgba(245,158,11,0.05);transition:background 300ms ease-out,border-color 300ms ease-out';
+    rr.style.background='rgba(245,158,11,0.04)';rr.style.borderLeftColor='#f59e0b';
+    rc.style.color='#fcd34d';ra.style.color='#f59e0b';
+    rd.style.background='#f59e0b';rd.style.transform='scale(1)';rd.style.boxShadow='0 0 6px rgba(245,158,11,0.4)';
+    ti.style.color='#fcd34d';ss.style.color='#f59e0b';ss.textContent='MONITORING';
+    si.style.borderColor='rgba(245,158,11,0.2)';st.style.color='#f59e0b';st.textContent='SIGNALS DETECTED';
+    sp.className='bss-signal-panel open';dr.style.display='none';
+  } else {
+    dash.style.cssText='background:rgba(28,8,8,0.97);border:1px solid rgba(239,68,68,0.25);border-radius:10px;overflow:hidden;box-shadow:0 0 40px rgba(239,68,68,0.08);transition:background 180ms ease-in,border-color 180ms ease-in';
+    rr.style.background='rgba(239,68,68,0.06)';rr.style.borderLeftColor='#ef4444';
+    rc.style.color='#fca5a5';ra.style.color='#ef4444';
+    rd.style.background='#ef4444';rd.style.transform='scale(1.3)';rd.style.boxShadow='0 0 8px rgba(239,68,68,0.6)';
+    ti.style.color='#fca5a5';ss.style.color='#ef4444';ss.textContent='THRESHOLD EXCEEDED';
+    si.style.borderColor='rgba(239,68,68,0.3)';st.style.color='#ef4444';st.textContent='THRESHOLD EXCEEDED';
+    sp.className='bss-signal-panel open-alert';dr.style.display='block';
+  }
+  ['calm','signal','alert'].forEach(s=>{
+    const b=document.getElementById('bss-btn-'+s);
+    const c={calm:'#374151',signal:'#f59e0b',alert:'#ef4444'}[s];
+    b.style.background=s===state?c:'transparent';
+    b.style.borderColor=s===state?c:'#2e3139';
+    b.style.color=s===state?'#fff':'#9ca3af';
+  });
+  document.getElementById('bss-token-name').textContent=ann.name;
+  document.getElementById('bss-token-name').style.color=ann.color;
+  document.getElementById('bss-token-value').textContent=ann.value;
+  document.getElementById('bss-token-note').textContent=ann.note;
+}
+function bssToggleAuto(){
+  if(bssAutoTimer){clearTimeout(bssAutoTimer);bssAutoTimer=null;document.getElementById('bss-auto-btn').textContent='▶ AUTOPLAY SEQUENCE';return;}
+  document.getElementById('bss-auto-btn').textContent='◼ STOP';
+  const seq=['calm','signal','alert','calm'];let i=0;
+  function step(){i=(i+1)%seq.length;bssSetState(seq[i]);const d=seq[i]==='calm'?1800:seq[i]==='alert'?2400:2000;bssAutoTimer=setTimeout(step,d);}
+  bssAutoTimer=setTimeout(step,800);
+}
+
+
+
+// ── Hotspot tour system ───────────────────────────────────────────────────
+
+const HOTSPOTS = {
+  0: [ // Tab 1: Calm Default — sidebar right edge at ~32%, content runs to ~98%
+    { top: 11, left: 17, h: 6,  w: 81, side: 'bottom', label: 'Design', text: '<strong>Calm by default.</strong> The dashboard surfaces the work queue and billing metrics without urgency signals. Attorneys can orient to their caseload without the system demanding attention.' },
+    { top: 50, left: 17, h: 21, w: 81, side: 'top',    label: 'System', text: '<strong>Continuous monitoring, silent aggregation.</strong> Signals from email threads, billing records, and matter status are being watched &#8212; but the interface stays quiet. The AI earns the right to interrupt.' },
+  ],
+  1: [ // Tab 2: Signal Detected — measured coordinates
+    { top: 23, left: 17, h: 3,  w: 82, side: 'bottom', label: 'Design',     text: '<strong>Threshold-based intervention.</strong> The AI surfaces the alert only when signals converge &#8212; not on every data point. The banner reads as informational, not alarming. The attorney decides what to do next.' },
+    { top: 23, left: 17, h: 3,  w: 82, side: 'top',    label: 'Hierarchy',  text: '<strong>Calm-by-default hierarchy preserved.</strong> The alert sits above the work queue without displacing it. Urgency is legible without being coercive &#8212; the attorney&#8217;s mental model of their caseload isn&#8217;t disrupted.' },
+    { top: 62, left: 17, h: 18, w: 81, side: 'top',    label: 'Governance', text: '<strong>No automatic action.</strong> The system flagged 3 matters. It did not escalate them, reassign them, or send any communication. It surfaced context for the attorney to act on.' },
+  ],
+  2: [ // Tab 3: Matter Detail — measured coordinates
+    { top: 8,  left: 73, h: 82, w: 27, side: 'left',  label: 'Design',    text: '<strong>Compressed context in one view.</strong> Billing trend, invoice aging, communication gap, and matter timeline &#8212; previously requiring four separate systems to piece together.' },
+    { top: 90, left: 74, h: 6,  w: 26, side: 'top',   label: 'Action',    text: '<strong>&#8220;Prepare Communication&#8221; &#8212; not &#8220;Send.&#8221;</strong> The CTA initiates draft preparation, not delivery. A human step remains before any client-facing action.' },
+    { top: 48, left: 17, h: 4,  w: 56, side: 'right', label: 'Hierarchy', text: '<strong>Progressive disclosure.</strong> The detail panel opens alongside the work queue &#8212; the attorney never loses their place in the dashboard.' },
+  ],
+  3: [ // Tab 4: Draft Surfaced — measured coordinates
+    { top: 64, left: 58, h: 7,  w: 28, side: 'top', label: 'Governance', text: '<strong>Four equal paths.</strong> Dismiss &#183; Remind Later &#183; Edit Draft &#183; Send. No path is visually privileged. The attorney retains full authority over timing and delivery.' },
+    { top: 59, left: 29, h: 6,  w: 29, side: 'top', label: 'Design',     text: '<strong>Tone controls without autonomy.</strong> More Formal / Add Urgency / Softer Tone &#8212; but the system cannot select tone on its own. Tone is a human judgment.' },
+    { top: 70, left: 29, h: 6,  w: 46, side: 'top', label: 'System',     text: '<strong>The footer says it plainly.</strong> &#8220;AI prepares a draft, but never sends it.&#8221; This is the governance model made visible &#8212; not buried in documentation.' },
+  ],
+};
+
+let tourTimers = [];
+let currentHotspotIndex = 0;
+let currentPanelIndex = 0;
+
+function clearTourTimers() {
+  tourTimers.forEach(t => clearTimeout(t));
+  tourTimers = [];
+}
+
+function hideHotspot(panelIndex) {
+  const overlay = document.getElementById('overlay-' + panelIndex);
+  const callout = document.getElementById('callout-' + panelIndex);
+  if (overlay) overlay.classList.remove('visible');
+  if (callout) callout.classList.remove('visible');
+}
+
+function showHotspot(panelIndex, hotspotIndex) {
+  const spots = HOTSPOTS[panelIndex];
+  if (!spots || hotspotIndex >= spots.length) return;
+  const spot = spots[hotspotIndex];
+
+  const overlay = document.getElementById('overlay-' + panelIndex);
+  const highlight = document.getElementById('highlight-' + panelIndex);
+  const callout = document.getElementById('callout-' + panelIndex);
+  if (!overlay || !highlight || !callout) return;
+
+  // Position highlight
+  highlight.style.top = spot.top + '%';
+  highlight.style.left = spot.left + '%';
+  highlight.style.height = spot.h + '%';
+  highlight.style.width = spot.w + '%';
+
+  // Position callout
+  const total = HOTSPOTS[panelIndex].length;
+  const progress = hotspotIndex + 1;
+  callout.innerHTML = 
+    '<div class="hotspot-callout-header">' +
+      '<div class="hotspot-callout-label">' + spot.label + '</div>' +
+      '<div class="hotspot-callout-progress">' + progress + ' of ' + total + '</div>' +
+    '</div>' +
+    '<div class="hotspot-callout-text">' + spot.text + '</div>';
+
+  if (spot.side === 'bottom') {
+    callout.style.top = (spot.top + spot.h + 1) + '%';
+    callout.style.left = Math.min(spot.left, 60) + '%';
+    callout.style.bottom = 'auto';
+    callout.style.right = 'auto';
+  } else if (spot.side === 'top') {
+    callout.style.bottom = (100 - spot.top + 1) + '%';
+    callout.style.left = Math.min(spot.left, 60) + '%';
+    callout.style.top = 'auto';
+    callout.style.right = 'auto';
+  } else if (spot.side === 'right') {
+    callout.style.top = spot.top + '%';
+    callout.style.left = (spot.left + spot.w + 1) + '%';
+    callout.style.bottom = 'auto';
+    callout.style.right = 'auto';
+  } else if (spot.side === 'left') {
+    callout.style.top = spot.top + '%';
+    callout.style.right = (100 - spot.left + 1) + '%';
+    callout.style.left = 'auto';
+    callout.style.bottom = 'auto';
+  }
+
+  // Show overlay and callout
+  overlay.classList.add('visible');
+  callout.classList.remove('visible');
+  setTimeout(() => callout.classList.add('visible'), 300);
+
+  // Scroll hotspot center into view — works regardless of which ancestor scrolls
+  setTimeout(() => {
+    const marker = document.createElement('div');
+    marker.style.cssText = 'position:absolute;top:' + (spot.top + spot.h * 0.5) + '%;left:0;width:1px;height:1px;pointer-events:none;';
+    overlay.appendChild(marker);
+    marker.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => { if (overlay.contains(marker)) overlay.removeChild(marker); }, 800);
+  }, 450);
+
+  // Highlight corresponding annotation card
+  const panel = document.getElementById('panel' + panelIndex);
+  if (panel) {
+    const annotations = panel.querySelectorAll('.annotation');
+    annotations.forEach((a, i) => {
+      a.classList.remove('active-insight');
+      if (i === hotspotIndex) {
+        a.classList.add('revealed', 'active-insight');
+      }
+    });
+  }
+}
+
+function initInsightTour(panelIndex) {
+  clearTourTimers();
+  currentPanelIndex = panelIndex;
+  currentHotspotIndex = 0;
+
+  // Hide all overlays
+  for (let i = 0; i < 4; i++) hideHotspot(i);
+
+  // Clear active highlight from previous tour
+  const panel = document.getElementById('panel' + panelIndex);
+  if (panel) {
+    panel.querySelectorAll('.annotation').forEach(a => {
+      a.classList.remove('active-insight');
+    });
+  }
+
+  const spots = HOTSPOTS[panelIndex];
+  if (!spots) return;
+
+  // Update legend — reset all items
+  const total = spots.length;
+  spots.forEach((_, i) => {
+    const item = document.getElementById('legend-' + panelIndex + '-' + i);
+    if (item) { item.classList.remove('active', 'done'); }
+  });
+  const counter = document.getElementById('legend-counter-' + panelIndex);
+
+  // Sequence through hotspots — 5s per insight
+  spots.forEach((spot, i) => {
+    const delay = 800 + (i * 5000);
+    tourTimers.push(setTimeout(() => {
+      currentHotspotIndex = i;
+      showHotspot(panelIndex, i);
+
+      // Update legend
+      spots.forEach((_, j) => {
+        const item = document.getElementById('legend-' + panelIndex + '-' + j);
+        if (!item) return;
+        item.classList.remove('active', 'done');
+        if (j < i) item.classList.add('done');
+        if (j === i) item.classList.add('active');
+      });
+      if (counter) counter.textContent = (i + 1) + ' of ' + total;
+
+      // Show scroll hint if content area is scrollable (more content below)
+      if (i === 0 && spots.length > 1) {
+        const contentEl = document.querySelector('.content');
+        const isScrollable = contentEl.scrollHeight > contentEl.clientHeight + 40;
+        if (isScrollable) {
+          const hint = document.getElementById('tour-scroll-hint');
+          if (hint) {
+            hint.classList.add('visible');
+            function hideOnScroll() {
+              hint.classList.remove('visible');
+              contentEl.removeEventListener('scroll', hideOnScroll);
+            }
+            contentEl.addEventListener('scroll', hideOnScroll);
+            setTimeout(() => {
+              hint.classList.remove('visible');
+              contentEl.removeEventListener('scroll', hideOnScroll);
+            }, 8000);
+          }
+        }
+      }
+    }, delay));
+  });
+
+  // After all shown — fade overlay, mark all done, scroll to top
+  const finalDelay = 800 + (spots.length * 5000);
+  tourTimers.push(setTimeout(() => {
+    hideHotspot(panelIndex);
+    spots.forEach((_, i) => {
+      const item = document.getElementById('legend-' + panelIndex + '-' + i);
+      if (item) { item.classList.remove('active'); item.classList.add('done'); }
+    });
+    // Reset all scroll containers after tour completes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const sw = document.getElementById('panel' + panelIndex)?.querySelector('.screenshot-wrap');
+    if (sw) sw.scrollTo({ top: 0, behavior: 'smooth' });
+  }, finalDelay));
+}
+
+
+function replayFromStart() {
+  initInsightTour(current);
+}
+
+// Init on load
+tourTimers.push(setTimeout(() => initInsightTour(0), 500));
+
+// ── end hotspot tour
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && current < STEPS - 1) goToStep(current + 1);
+  if (e.key === 'ArrowLeft' && current > 0) goToStep(current - 1);
+});
+</script>
+<div id="tour-scroll-hint" class="scroll-hint">
+  <span class="scroll-hint-label">More insights below</span>
+  <div class="scroll-hint-arrow"></div>
+</div>
+</body>
+</html>

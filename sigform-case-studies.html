@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work - sig+form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans+Condensed:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --fog: #F1F2F6;
+    --dove: #E3E5ED;
+    --slate: #B0B6C8;
+    --ash: #4A5168;
+    --ink: #141828;
+    --cobalt: #2B4DB8;
+    --cobalt-light: #7B9AE8;
+    --cobalt-tint: #EEF1FB;
+    --violet: #4930B0;
+    --violet-light: #9880E0;
+    --violet-tint: #EEEAFB;
+    --dark-void: #111420;
+    --dark-surface: #1A1E30;
+    --dark-border: #2E3450;
+    --dark-mist: #9BA3BE;
+    --dark-cloud: #E8EAF2;
+    --tag-cobalt-text: #1C2E7A;
+    --tag-violet-text: #2E1A7A;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--fog);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  /* ── SECTION WRAPPER ── */
+  .work-section {
+    padding: 8rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--cobalt);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-eyebrow::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--cobalt);
+  }
+
+  /* ── CASE STUDY BLOCK ── */
+  .cs-block {
+    margin-bottom: 7rem;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .cs-block.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .cs-block:last-child { margin-bottom: 0; }
+
+  /* Header */
+  .cs-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--dove);
+  }
+
+  .cs-index {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--ash);
+    margin-bottom: 0.6rem;
+  }
+
+  .cs-title {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-weight: 300;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .cs-title em {
+    font-style: italic;
+    color: var(--violet);
+  }
+
+  .cs-subtitle {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ash);
+    letter-spacing: 0.02em;
+  }
+
+  .cs-service-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    padding: 0.35rem 0.8rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    align-self: start;
+    margin-top: 0.4rem;
+  }
+
+  .cs-service-tag.cobalt {
+    background: var(--cobalt-tint);
+    color: var(--tag-cobalt-text);
+    border: 1px solid rgba(43, 77, 184, 0.15);
+  }
+
+  .cs-service-tag.violet {
+    background: var(--violet-tint);
+    color: var(--tag-violet-text);
+    border: 1px solid rgba(73, 48, 176, 0.15);
+  }
+
+  /* Body grid */
+  .cs-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .cs-col-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ash);
+    margin-bottom: 0.85rem;
+  }
+
+  .cs-col p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--ash);
+    margin-bottom: 0.75rem;
+  }
+
+  .cs-col p:last-child { margin-bottom: 0; }
+
+  /* Principle line */
+  .cs-principle {
+    background: var(--cobalt-tint);
+    border-left: 2px solid var(--cobalt);
+    padding: 1rem 1.25rem;
+    border-radius: 0 3px 3px 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .cs-principle p {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--tag-cobalt-text);
+    font-style: italic;
+  }
+
+  .cs-principle.violet-rule {
+    background: var(--violet-tint);
+    border-left-color: var(--violet);
+  }
+
+  .cs-principle.violet-rule p {
+    color: var(--tag-violet-text);
+  }
+
+  /* Signal diagram */
+  .cs-diagram {
+    background: var(--dark-surface);
+    border: 1px solid var(--dark-border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .diagram-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cobalt-light);
+    margin-bottom: 1.25rem;
+  }
+
+  .signal-flow {
+    display: grid;
+    grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr;
+    gap: 0;
+    align-items: center;
+  }
+
+  .signal-col-head {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.52rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--dark-mist);
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .signal-source {
+    background: rgba(43,77,184,0.15);
+    border: 1px solid rgba(123,154,232,0.25);
+    border-radius: 3px;
+    padding: 0.4rem 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--cobalt-light);
+    text-align: center;
+    margin-bottom: 0.35rem;
+  }
+
+  .signal-arrow {
+    text-align: center;
+    color: var(--dark-mist);
+    font-size: 0.7rem;
+    padding-top: 1.2rem;
+  }
+
+  .signal-engine {
+    background: rgba(73,48,176,0.2);
+    border: 1px solid rgba(152,128,224,0.3);
+    border-radius: 3px;
+    padding: 0.75rem 0.6rem;
+    text-align: center;
+  }
+
+  .signal-engine-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--violet-light);
+    margin-bottom: 0.25rem;
+  }
+
+  .signal-engine-sub {
+    font-size: 0.6rem;
+    color: var(--dark-mist);
+    line-height: 1.4;
+  }
+
+  .signal-output {
+    background: rgba(20,24,40,0.6);
+    border: 1px solid var(--dark-border);
+    border-radius: 3px;
+    padding: 0.5rem;
+  }
+
+  .signal-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.3rem;
+    border-radius: 2px;
+    margin-bottom: 0.2rem;
+  }
+
+  .signal-row:last-child { margin-bottom: 0; }
+
+  .signal-row.high { border-left: 2px solid #ef4444; }
+  .signal-row.med  { border-left: 2px solid #f59e0b; }
+  .signal-row.low  { border-left: 2px solid var(--dark-border); opacity: 0.5; }
+
+  .signal-row-name {
+    font-size: 0.58rem;
+    color: var(--dark-cloud);
+    flex: 1;
+  }
+
+  .signal-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.48rem;
+    padding: 0.06rem 0.28rem;
+    border-radius: 2px;
+  }
+
+  .pill-high { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .pill-med  { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .pill-low  { background: rgba(155,163,190,0.1); color: var(--dark-mist); }
+
+  .signal-action {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .action-draft {
+    background: rgba(43,77,184,0.12);
+    border: 1px solid rgba(123,154,232,0.2);
+    border-radius: 3px;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .action-draft-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.48rem;
+    color: var(--cobalt-light);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.2rem;
+  }
+
+  .action-draft-text {
+    font-size: 0.58rem;
+    color: var(--dark-mist);
+    line-height: 1.4;
+    font-style: italic;
+  }
+
+  .action-btns {
+    display: flex;
+    gap: 0.3rem;
+  }
+
+  .action-btn-primary {
+    flex: 1;
+    background: var(--cobalt-light);
+    border-radius: 2px;
+    padding: 0.25rem;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.5rem;
+    color: var(--dark-void);
+    font-weight: 500;
+  }
+
+  .action-btn-ghost {
+    flex: 1;
+    border: 1px solid var(--dark-border);
+    border-radius: 2px;
+    padding: 0.25rem;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.5rem;
+    color: var(--dark-mist);
+  }
+
+  .action-governance {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.52rem;
+    color: var(--dark-mist);
+    line-height: 1.5;
+    padding: 0.3rem 0;
+    border-top: 1px solid var(--dark-border);
+    margin-top: 0.1rem;
+  }
+
+  /* Permitted / not permitted */
+  .cs-permissions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .permission-block {
+    border-radius: 3px;
+    padding: 1rem 1.1rem;
+  }
+
+  .permission-block.allowed {
+    background: var(--cobalt-tint);
+    border: 1px solid rgba(43,77,184,0.15);
+  }
+
+  .permission-block.denied {
+    background: #FEF2F2;
+    border: 1px solid rgba(239,68,68,0.15);
+  }
+
+  .permission-head {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+  }
+
+  .permission-block.allowed .permission-head { color: var(--tag-cobalt-text); }
+  .permission-block.denied  .permission-head { color: #DC2626; }
+
+  .permission-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .permission-list li {
+    font-size: 0.78rem;
+    color: var(--ash);
+    display: flex;
+    gap: 0.5rem;
+    line-height: 1.5;
+  }
+
+  .permission-list li::before {
+    content: '→';
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+  }
+
+  .permission-block.allowed li::before { color: var(--cobalt); }
+  .permission-block.denied  li::before { color: #DC2626; }
+
+  /* Outcomes strip */
+  .cs-outcomes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--dove);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+
+  .outcome-cell {
+    padding: 1.25rem 1rem;
+    border-right: 1px solid var(--dove);
+    text-align: center;
+  }
+
+  .outcome-cell:last-child { border-right: none; }
+
+  .outcome-value {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-weight: 300;
+    font-size: 1.75rem;
+    letter-spacing: -0.02em;
+    color: var(--cobalt);
+    line-height: 1;
+    margin-bottom: 0.35rem;
+  }
+
+  .outcome-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--ash);
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  /* Toggle diagram */
+  .toggle-diagram {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--dove);
+    border: 1px solid var(--dove);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+
+  .toggle-cell {
+    background: var(--fog);
+    padding: 1.1rem 1rem;
+  }
+
+  .toggle-cell-head {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .toggle-cell-head .label { color: var(--ash); }
+  .toggle-cell-head .state {
+    font-size: 0.52rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 2px;
+    background: var(--dove);
+    color: var(--ash);
+  }
+
+  .toggle-cell-head .state.active {
+    background: var(--cobalt-tint);
+    color: var(--tag-cobalt-text);
+    border: 1px solid rgba(43,77,184,0.2);
+  }
+
+  .toggle-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .toggle-row-lo {
+    height: 10px;
+    background: var(--dove);
+    border-radius: 2px;
+  }
+
+  .toggle-row-lo.short { width: 60%; }
+  .toggle-row-lo.medium { width: 80%; }
+
+  .toggle-row-real {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 0.4rem;
+    background: white;
+    border: 1px solid var(--dove);
+    border-radius: 2px;
+    font-size: 0.62rem;
+    color: var(--ink);
+  }
+
+  .toggle-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.48rem;
+    padding: 0.06rem 0.3rem;
+    border-radius: 2px;
+  }
+
+  .toggle-pill.blue { background: #EFF6FF; color: #1D4ED8; }
+  .toggle-pill.amber { background: #FFFBEB; color: #D97706; }
+  .toggle-pill.red { background: #FEF2F2; color: #DC2626; }
+  .toggle-pill.green { background: #F0FDF4; color: #16A34A; }
+
+  .toggle-filter-bar {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 0.3rem;
+    flex-wrap: wrap;
+  }
+
+  .toggle-filter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.48rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 2px;
+    border: 1px solid var(--dove);
+    color: var(--ash);
+    background: white;
+  }
+
+  .toggle-filter.on {
+    background: var(--cobalt-tint);
+    border-color: rgba(43,77,184,0.2);
+    color: var(--tag-cobalt-text);
+  }
+
+  .toggle-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.52rem;
+    color: var(--ash);
+    margin-top: 0.4rem;
+    line-height: 1.4;
+  }
+
+  /* Artifact link */
+  .cs-artifact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    color: var(--fog);
+    background: var(--cobalt);
+    padding: 0.7rem 1.4rem;
+    border-radius: 3px;
+    text-decoration: none;
+    border: 1px solid var(--cobalt);
+    transition: all 0.2s ease;
+  }
+
+  .cs-artifact-link:hover {
+    background: var(--violet);
+    border-color: var(--violet);
+    transform: translateY(-1px);
+  }
+
+  .cs-artifact-link::after {
+    content: '→';
+    transition: transform 0.2s ease;
+  }
+
+  .cs-artifact-link:hover::after { transform: translateX(3px); }
+
+  /* Divider between case studies */
+  .cs-divider {
+    height: 1px;
+    background: var(--dove);
+    margin: 5rem 0;
+  }
+
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    body { background: var(--dark-void); color: var(--dark-cloud); }
+    .cs-title { color: var(--dark-cloud); }
+    .cs-title em { color: var(--violet-light); }
+    .cs-subtitle { color: var(--dark-mist); }
+    .cs-col p { color: var(--dark-mist); }
+    .cs-header { border-color: var(--dark-border); }
+    .cs-principle { background: #1A2440; border-left-color: var(--cobalt-light); }
+    .cs-principle p { color: var(--cobalt-light); }
+    .cs-principle.violet-rule { background: #1E1838; border-left-color: var(--violet-light); }
+    .cs-principle.violet-rule p { color: var(--violet-light); }
+    .cs-outcomes { border-color: var(--dark-border); }
+    .outcome-cell { border-color: var(--dark-border); background: var(--dark-surface); }
+    .outcome-value { color: var(--cobalt-light); }
+    .outcome-label { color: var(--dark-mist); }
+    .toggle-diagram { background: var(--dark-border); border-color: var(--dark-border); }
+    .toggle-cell { background: var(--dark-surface); }
+    .toggle-cell-head .label { color: var(--dark-mist); }
+    .toggle-row-lo { background: var(--dark-border); }
+    .toggle-row-real { background: var(--dark-void); border-color: var(--dark-border); color: var(--dark-cloud); }
+    .permission-block.allowed { background: #1A2440; border-color: rgba(123,154,232,0.2); }
+    .permission-block.denied { background: #2D1515; border-color: rgba(239,68,68,0.2); }
+    .permission-list li { color: var(--dark-mist); }
+    .cs-service-tag.cobalt { background: #1A2440; color: var(--cobalt-light); border-color: rgba(123,154,232,0.2); }
+    .cs-service-tag.violet { background: #1E1838; color: var(--violet-light); border-color: rgba(152,128,224,0.2); }
+    .section-eyebrow { color: var(--cobalt-light); }
+    .section-eyebrow::before { background: var(--cobalt-light); }
+    .cs-divider { background: var(--dark-border); }
+    .toggle-filter { background: var(--dark-void); border-color: var(--dark-border); color: var(--dark-mist); }
+    .toggle-filter.on { background: #1A2440; border-color: rgba(123,154,232,0.2); color: var(--cobalt-light); }
+    .toggle-note { color: var(--dark-mist); }
+    .cs-col-label { color: var(--dark-mist); }
+  }
+
+  @media (max-width: 768px) {
+    .work-section { padding: 5rem 2rem; }
+    .cs-body { grid-template-columns: 1fr; gap: 2rem; }
+    .signal-flow { grid-template-columns: 1fr; gap: 0.5rem; }
+    .signal-arrow { display: none; }
+    .cs-outcomes { grid-template-columns: 1fr 1fr; }
+    .toggle-diagram { grid-template-columns: 1fr; }
+    .cs-permissions { grid-template-columns: 1fr; }
+    .cs-header { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<section class="work-section" id="work">
+
+  <p class="section-eyebrow">selected work</p>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CASE STUDY 01 - BILLING INTELLIGENCE
+  ══════════════════════════════════════════════════════════ -->
+  <div class="cs-block" id="cs-billing">
+
+    <div class="cs-header">
+      <div>
+        <div class="cs-index">01 - interface.build · legaltech enterprise</div>
+        <h2 class="cs-title">
+          AI that surfaces what<br>
+          attorneys <em>can't see.</em>
+        </h2>
+        <p class="cs-subtitle">Decision-support system for billing attorneys - global law firms, 5,000+ attorneys</p>
+      </div>
+      <span class="cs-service-tag cobalt">interface.build</span>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col">
+        <div class="cs-col-label">The environment</div>
+        <p>Billing attorneys at global law firms manage client health, revenue cycles, and timekeeper oversight - often across hundreds of active matters simultaneously. The signals that indicate a client relationship is deteriorating are real and legible in retrospect. In the moment, they're buried across disconnected systems: email threads, document libraries, billing tables, matter management platforms.</p>
+        <p>Without a surface that aggregates these signals, problems compound invisibly until they're expensive. The existing SharePoint environments offered no decision-support layer - just raw data in fragmented views.</p>
+      </div>
+      <div class="cs-col">
+        <div class="cs-col-label">The constraint</div>
+        <p>The design principle that governed every decision: AI should surface what the attorney can't see - not make decisions they shouldn't delegate. Awareness without overreach.</p>
+        <p>In a regulated professional environment, every AI output carries liability implications. The system needed to compress context and prepare action - not take it. The boundary between those two things required explicit, deliberate design at every interaction point.</p>
+      </div>
+    </div>
+
+    <div class="cs-principle">
+      <p>The work was designing the line between inference and action - and making sure the system never crossed it on the attorney's behalf.</p>
+    </div>
+
+    <!-- Signal flow diagram -->
+    <div class="cs-diagram">
+      <div class="diagram-label">Signal architecture - four sources, one surface, attorney owns the action</div>
+      <div class="signal-flow">
+
+        <div>
+          <div class="signal-col-head">Data Sources</div>
+          <div class="signal-source">Email threads</div>
+          <div class="signal-source">Billing records</div>
+          <div class="signal-source">Document library</div>
+          <div class="signal-source">Matter status</div>
+        </div>
+
+        <div class="signal-arrow">→</div>
+
+        <div>
+          <div class="signal-col-head">AI Engine</div>
+          <div class="signal-engine">
+            <div class="signal-engine-label">Signal aggregation</div>
+            <div class="signal-engine-sub">Compresses 4+ sources into client health score. Intervenes only at threshold - not on every data point.</div>
+          </div>
+        </div>
+
+        <div class="signal-arrow">→</div>
+
+        <div>
+          <div class="signal-col-head">Interface</div>
+          <div class="signal-output">
+            <div class="signal-row high">
+              <span class="signal-row-name" style="font-size:0.58rem;color:#E8EAF2">Client A - 62 days</span>
+              <span class="signal-pill pill-high">HIGH</span>
+            </div>
+            <div class="signal-row med">
+              <span class="signal-row-name" style="font-size:0.58rem;color:#E8EAF2">Client B - 31 days</span>
+              <span class="signal-pill pill-med">MED</span>
+            </div>
+            <div class="signal-row low">
+              <span class="signal-row-name" style="font-size:0.58rem;color:#9BA3BE">Client C - monitoring</span>
+              <span class="signal-pill pill-low">LOW</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="signal-arrow">→</div>
+
+        <div>
+          <div class="signal-col-head">Attorney Action</div>
+          <div class="signal-action">
+            <div class="action-draft">
+              <div class="action-draft-label">AI DRAFT SURFACED</div>
+              <div class="action-draft-text">"Dear [Client], regarding matter 2241, I wanted to follow up on the outstanding balance..."</div>
+            </div>
+            <div class="action-btns">
+              <div class="action-btn-primary">Edit + Send</div>
+              <div class="action-btn-ghost">Dismiss</div>
+            </div>
+            <div class="action-governance">AI prepares · attorney decides · nothing sends automatically</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="cs-permissions">
+      <div class="permission-block allowed">
+        <div class="permission-head">System permitted to</div>
+        <ul class="permission-list">
+          <li>Surface converging risk signals across disconnected data sources</li>
+          <li>Compress context into a single client health view</li>
+          <li>Draft candidate communications for attorney review</li>
+          <li>Intervene when signal convergence crosses a defined threshold</li>
+        </ul>
+      </div>
+      <div class="permission-block denied">
+        <div class="permission-head">System not permitted to</div>
+        <ul class="permission-list">
+          <li>Send client communications autonomously</li>
+          <li>Determine tone or relational appropriateness</li>
+          <li>Act on inferred intent from incomplete context</li>
+          <li>Make decisions that belong to the attorney</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cs-outcomes">
+      <div class="outcome-cell">
+        <div class="outcome-value">~20</div>
+        <div class="outcome-label">Platforms shipped</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-value">5K+</div>
+        <div class="outcome-label">Attorneys per firm</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-value">4+</div>
+        <div class="outcome-label">Sources aggregated</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-value">↓ hrs</div>
+        <div class="outcome-label">Time-to-judgment</div>
+      </div>
+    </div>
+
+    <a href="billing_explorer.html" class="cs-artifact-link" target="_blank">
+      explore the billing intelligence interface
+    </a>
+
+  </div>
+
+  <div class="cs-divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CASE STUDY 02 - MERIDIAN DESIGN SYSTEM
+  ══════════════════════════════════════════════════════════ -->
+  <div class="cs-block" id="cs-meridian">
+
+    <div class="cs-header">
+      <div>
+        <div class="cs-index">02 - system.build · legaltech consultancy</div>
+        <h2 class="cs-title">
+          A system that <em>evolves</em><br>
+          in the room.
+        </h2>
+        <p class="cs-subtitle">Internal wireframe design system - legaltech consultancy, replaced Balsamiq across all client engagements</p>
+      </div>
+      <span class="cs-service-tag violet">system.build</span>
+    </div>
+
+    <div class="cs-body">
+      <div class="cs-col">
+        <div class="cs-col-label">The environment</div>
+        <p>A legaltech consultancy produced wireframes as the primary artifact for client discovery sessions - multi-hour meetings where requirements were finalized, decisions made, and scope locked. The quality and flexibility of those wireframes directly determined how productive those meetings were.</p>
+        <p>The previous tool (Balsamiq) worked for low-fidelity sketching. It couldn't evolve in complexity during a live meeting, required rebuilding components from scratch for each new engagement (roughly 60% rework per project), and sat outside Figma - creating a gap between discovery and production work.</p>
+      </div>
+      <div class="cs-col">
+        <div class="cs-col-label">The constraint</div>
+        <p>The consultants needed a system that could move fluidly across fidelity levels within the same component, in the same file, during a live client meeting. A table might need to evolve from a placeholder grid to showing invoice status indicators to revealing a full filtering panel - all in response to where the client's questions led.</p>
+        <p>That range had to be achievable by consultants with minimal Figma experience and no layer-naming discipline, in real time, without breaking anything. The system had to be more capable than its users required and simpler to operate than their skill level demanded.</p>
+      </div>
+    </div>
+
+    <div class="cs-principle violet-rule">
+      <p>The first iteration was too polished - clients gave visual feedback instead of functional feedback. Pulling back a register kept the wireframe register intact while retaining structural range. Fidelity calibration is a design decision, not a default.</p>
+    </div>
+
+    <!-- Toggle architecture diagram -->
+    <div class="toggle-diagram">
+
+      <div class="toggle-cell">
+        <div class="toggle-cell-head">
+          <span class="label">Low - skeleton</span>
+          <span class="state">Default</span>
+        </div>
+        <div class="toggle-preview">
+          <div class="toggle-row-lo" style="width:35%;height:8px;margin-bottom:0.4rem"></div>
+          <div class="toggle-row-lo"></div>
+          <div class="toggle-row-lo short"></div>
+          <div class="toggle-row-lo medium"></div>
+          <div class="toggle-row-lo short"></div>
+        </div>
+        <div class="toggle-note">Content off · Status off · Filters off - layout and proportion only</div>
+      </div>
+
+      <div class="toggle-cell">
+        <div class="toggle-cell-head">
+          <span class="label">Mid - structured</span>
+          <span class="state active">Real content</span>
+        </div>
+        <div class="toggle-preview">
+          <div class="toggle-row-real">
+            <span>Richardson v. Apex</span>
+            <span class="toggle-pill blue">IN PROGRESS</span>
+          </div>
+          <div class="toggle-row-real">
+            <span>Westbrook Acquisition</span>
+            <span class="toggle-pill amber">PENDING</span>
+          </div>
+          <div class="toggle-row-real">
+            <span>Employment Dispute</span>
+            <span class="toggle-pill red">ACTION NEEDED</span>
+          </div>
+        </div>
+        <div class="toggle-note">Real matter names + status pills - client validates the data model</div>
+      </div>
+
+      <div class="toggle-cell">
+        <div class="toggle-cell-head">
+          <span class="label">High - full feature</span>
+          <span class="state active">All layers</span>
+        </div>
+        <div class="toggle-preview">
+          <div class="toggle-filter-bar">
+            <span class="toggle-filter on">All Types</span>
+            <span class="toggle-filter">Litigation</span>
+            <span class="toggle-filter">Contract</span>
+          </div>
+          <div class="toggle-row-real" style="border-left: 2px solid #DC2626;">
+            <span>Employment Dispute</span>
+            <span class="toggle-pill red">90+ days</span>
+          </div>
+          <div class="toggle-row-real" style="border-left: 2px solid #D97706;">
+            <span>IP License - TechCorp</span>
+            <span class="toggle-pill amber">DUE SOON</span>
+          </div>
+        </div>
+        <div class="toggle-note">Filters, invoice aging, activity sparklines - everything needed to act</div>
+      </div>
+
+    </div>
+
+    <div class="cs-body" style="margin-bottom: 2rem;">
+      <div class="cs-col">
+        <div class="cs-col-label">What was built</div>
+        <p>Eight enterprise UI components - matter table, invoice table, time entry calendar, timekeeper dashboard, news, leadership message, key documents, key contacts - each carrying the full fidelity range in a single Figma frame. Consultants toggle layers, not swap components.</p>
+        <p>Component reuse architecture: patterns built once, applicable across any client engagement. Introduced in two to three working sessions with no written documentation required.</p>
+      </div>
+      <div class="cs-col">
+        <div class="cs-col-label">What changed</div>
+        <p>The consultants shifted from treating wireframes as static pre-meeting deliverables to using them as live instruments that could evolve in the room. That shift changed what client meetings could accomplish - and compressed the time between discovery and development handoff across every engagement downstream.</p>
+        <p>Zero support requests in six months of continuous use. The clearest possible signal that the system was designed for its actual users, not a hypothetical version of them.</p>
+      </div>
+    </div>
+
+    <div class="cs-outcomes">
+      <div class="outcome-cell">
+        <div class="outcome-value">97%</div>
+        <div class="outcome-label">Reduction in component build time</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-value">8→1h</div>
+        <div class="outcome-label">Full platform fidelity evolution</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-value">40%</div>
+        <div class="outcome-label">Increase in component reuse</div>
+      </div>
+      <div class="outcome-cell">
+        <div class="outcome-value">0</div>
+        <div class="outcome-label">Support requests in 6 months</div>
+      </div>
+    </div>
+
+    <a href="meridian_explorer.html" class="cs-artifact-link" target="_blank">
+      explore the component system
+    </a>
+
+  </div>
+
+</section>
+
+<script>
+  // Scroll-triggered reveal
+  const blocks = document.querySelectorAll('.cs-block');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  blocks.forEach(block => observer.observe(block));
+</script>
+
+</body>
+</html>
