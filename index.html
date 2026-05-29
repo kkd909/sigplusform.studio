@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sig+form - product design for complex data environments</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=IBM+Plex+Sans+Condensed:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --fog: #F1F2F6;
+    --dove: #E3E5ED;
+    --slate: #B0B6C8;
+    --ash: #4A5168;
+    --ink: #141828;
+    --cobalt: #2B4DB8;
+    --cobalt-light: #7B9AE8;
+    --cobalt-tint: #EEF1FB;
+    --violet: #4930B0;
+    --violet-light: #9880E0;
+    --violet-tint: #EEEAFB;
+    --dark-void: #111420;
+    --dark-surface: #1A1E30;
+    --dark-border: #2E3450;
+    --dark-mist: #9BA3BE;
+    --dark-cloud: #E8EAF2;
+    --tag-cobalt-text: #1C2E7A;
+    --tag-violet-text: #2E1A7A;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 16px; }
+
+  body {
+    background: var(--fog);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 400;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #bg-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .site-wrapper {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 4rem;
+    position: relative;
+  }
+
+  .wordmark {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-size: 1.1rem;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .wordmark .plus { color: var(--violet); }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .nav-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    text-transform: lowercase;
+    transition: color 0.2s ease;
+  }
+
+  .nav-links a:hover { color: var(--cobalt); }
+
+  .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4rem 4rem 6rem;
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  .hero-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--cobalt);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--cobalt);
+  }
+
+  .hero-headline {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-weight: 300;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    max-width: 18ch;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-headline .line {
+    display: block;
+    overflow: hidden;
+  }
+
+  .hero-headline .line span {
+    display: block;
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  .hero-headline .line:nth-child(1) span { animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.7s; }
+  .hero-headline .line:nth-child(2) span { animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.85s; }
+  .hero-headline .line:nth-child(3) span { animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards 1.0s; }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--violet);
+  }
+
+  .hero-body {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--ash);
+    max-width: 46ch;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.2s;
+  }
+
+  .services-row {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.35s;
+  }
+
+  .service-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    padding: 0.4rem 0.85rem;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    cursor: default;
+    border: 1px solid transparent;
+  }
+
+  .service-tag.cobalt {
+    background: var(--cobalt-tint);
+    color: var(--tag-cobalt-text);
+    border-color: rgba(43, 77, 184, 0.15);
+  }
+
+  .service-tag.violet {
+    background: var(--violet-tint);
+    color: var(--tag-violet-text);
+    border-color: rgba(73, 48, 176, 0.15);
+  }
+
+  .service-tag.neutral {
+    background: var(--dove);
+    color: var(--ash);
+    border-color: var(--slate);
+  }
+
+  .service-tag:hover { transform: translateY(-1px); }
+  .service-tag.cobalt:hover { background: rgba(43, 77, 184, 0.12); }
+  .service-tag.violet:hover { background: rgba(73, 48, 176, 0.12); }
+
+  .cta-row {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.5s;
+  }
+
+  .cta-primary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--fog);
+    background: var(--cobalt);
+    padding: 0.8rem 1.75rem;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid var(--cobalt);
+  }
+
+  .cta-primary:hover {
+    background: var(--violet);
+    border-color: var(--violet);
+    transform: translateY(-1px);
+  }
+
+  .cta-secondary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--ash);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s ease;
+  }
+
+  .cta-secondary:hover { color: var(--cobalt); }
+
+  .cta-secondary::after {
+    content: '→';
+    transition: transform 0.2s ease;
+  }
+
+  .cta-secondary:hover::after { transform: translateX(3px); }
+
+  .hero-rule {
+    position: absolute;
+    bottom: 3rem;
+    left: 4rem;
+    right: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1.7s;
+  }
+
+  .rule-line {
+    flex: 1;
+    height: 1px;
+    background: var(--slate);
+  }
+
+  .rule-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--ash);
+    padding: 0 1.5rem;
+    text-transform: uppercase;
+  }
+
+
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(100%); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50%       { opacity: 1;   transform: scaleY(1.1); }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body { background: var(--dark-void); color: var(--dark-cloud); }
+    .wordmark { color: var(--dark-cloud); }
+    .wordmark .plus { color: var(--violet-light); }
+    .nav-links a { color: var(--dark-mist); }
+    .nav-links a:hover { color: var(--cobalt-light); }
+    .hero-eyebrow { color: var(--cobalt-light); }
+    .hero-eyebrow::before { background: var(--cobalt-light); }
+    .hero-headline { color: var(--dark-cloud); }
+    .hero-headline em { color: var(--violet-light); }
+    .hero-body { color: var(--dark-mist); }
+    .service-tag.cobalt { background: #1A2440; color: var(--cobalt-light); border-color: rgba(123,154,232,0.2); }
+    .service-tag.violet { background: #1E1838; color: var(--violet-light); border-color: rgba(152,128,224,0.2); }
+    .service-tag.neutral { background: var(--dark-surface); color: var(--dark-mist); border-color: var(--dark-border); }
+    .cta-primary { background: var(--cobalt-light); border-color: var(--cobalt-light); color: var(--dark-void); }
+    .cta-primary:hover { background: var(--violet-light); border-color: var(--violet-light); }
+    .cta-secondary { color: var(--dark-mist); }
+    .cta-secondary:hover { color: var(--cobalt-light); }
+    .rule-line { background: var(--dark-border); }
+    .rule-text { color: var(--dark-mist); }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 1.5rem 2rem; }
+    .hero { padding: 2rem 2rem 5rem; }
+    .hero-rule { left: 2rem; right: 2rem; }
+    .accent-shape { display: none; }
+  }
+
+  /* ── SHARED SECTION STYLES ── */
+  .section {
+    padding: 8rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--cobalt);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-eyebrow::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--cobalt);
+  }
+
+  /* ── SERVICES ── */
+  .section--services {
+    background: var(--ink);
+  }
+
+  .section--services .section-eyebrow {
+    color: var(--cobalt-light);
+  }
+
+  .section--services .section-eyebrow::before {
+    background: var(--cobalt-light);
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--dark-border);
+    border: 1px solid var(--dark-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .service-card {
+    background: var(--dark-surface);
+    padding: 2.5rem 2rem;
+    position: relative;
+    transition: background 0.25s ease;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .service-card:hover { background: #1E2438; }
+  .service-card:hover::before { opacity: 1; }
+
+  .service-card--cobalt::before { background: var(--cobalt-light); }
+  .service-card--violet::before { background: var(--violet-light); }
+  .service-card--neutral::before { background: var(--slate); }
+
+  .service-card-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 3px;
+  }
+
+  .service-card--cobalt .service-card-tag {
+    background: rgba(43,77,184,0.2);
+    color: var(--cobalt-light);
+    border: 1px solid rgba(123,154,232,0.25);
+  }
+
+  .service-card--violet .service-card-tag {
+    background: rgba(73,48,176,0.2);
+    color: var(--violet-light);
+    border: 1px solid rgba(152,128,224,0.25);
+  }
+
+  .service-card--neutral .service-card-tag {
+    background: rgba(176,182,200,0.1);
+    color: var(--dark-mist);
+    border: 1px solid rgba(176,182,200,0.2);
+  }
+
+  .service-card-desc {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--dark-mist);
+    margin-bottom: 1.5rem;
+  }
+
+  .service-card-headline {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-weight: 300;
+    font-size: 1.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--dark-cloud);
+    margin-bottom: 0.75rem;
+  }
+
+  .service-card-caps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--dark-border);
+    padding-top: 1.25rem;
+  }
+
+  .service-card-caps li {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.02em;
+    color: var(--dark-mist);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--dark-border);
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+  }
+
+  .service-card-caps li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .service-card:hover .service-card-caps li {
+    color: var(--dark-cloud);
+  }
+
+  .service-card-caps li::before {
+    content: '→';
+    flex-shrink: 0;
+    font-size: 0.58rem;
+    opacity: 0.5;
+  }
+
+  .service-card--cobalt .service-card-caps li::before { color: var(--cobalt-light); }
+  .service-card--violet .service-card-caps li::before { color: var(--violet-light); }
+  .service-card--neutral .service-card-caps li::before { color: var(--dark-mist); }
+
+  .service-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--dark-border);
+    width: 100%;
+    transition: gap 0.2s ease, color 0.2s ease;
+  }
+
+  .service-card--cobalt .service-card-link { color: var(--cobalt-light); }
+  .service-card--violet .service-card-link { color: var(--violet-light); }
+  .service-card--neutral .service-card-link { color: var(--dark-mist); }
+
+  .service-card-link::after {
+    content: '→';
+    transition: transform 0.2s ease;
+  }
+
+  .service-card-link:hover::after { transform: translateX(4px); }
+
+  /* ── WORK ── */
+  .section--work {
+    background: var(--fog);
+  }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .work-card {
+    position: relative;
+    border: 1px solid var(--dove);
+    border-radius: 4px;
+    overflow: hidden;
+    background: white;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .work-card:hover {
+    border-color: var(--cobalt);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(43,77,184,0.1);
+  }
+
+  .work-card-preview {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+    background: var(--dark-void);
+  }
+
+  /* Billing preview */
+  .preview--billing {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    gap: 0.5rem;
+    height: 100%;
+  }
+
+  .preview-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0.6rem;
+    background: rgba(43,77,184,0.12);
+    border: 1px solid rgba(123,154,232,0.15);
+    border-radius: 3px;
+  }
+
+  .preview-bar-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--cobalt-light);
+    letter-spacing: 0.06em;
+  }
+
+  .preview-bar-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.52rem;
+    padding: 0.06rem 0.3rem;
+    border-radius: 2px;
+    background: rgba(239,68,68,0.15);
+    color: #ef4444;
+  }
+
+  .preview-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+  }
+
+  .preview-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 2px;
+    border-left: 2px solid transparent;
+  }
+
+  .preview-row.high { border-left-color: #ef4444; }
+  .preview-row.med  { border-left-color: #f59e0b; }
+  .preview-row.low  { border-left-color: var(--dark-border); opacity: 0.5; }
+
+  .preview-row-name {
+    font-size: 0.6rem;
+    color: var(--dark-cloud);
+    flex: 1;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .preview-row-pill {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.48rem;
+    padding: 0.06rem 0.28rem;
+    border-radius: 2px;
+  }
+
+  .preview-row-pill.high { background: rgba(239,68,68,0.15); color: #ef4444; }
+  .preview-row-pill.med  { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .preview-row-pill.low  { background: rgba(155,163,190,0.1); color: var(--dark-mist); }
+
+  .preview-draft {
+    background: rgba(43,77,184,0.1);
+    border: 1px solid rgba(123,154,232,0.15);
+    border-radius: 3px;
+    padding: 0.4rem 0.5rem;
+  }
+
+  .preview-draft-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.46rem;
+    color: var(--cobalt-light);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.15rem;
+  }
+
+  .preview-draft-text {
+    font-size: 0.55rem;
+    color: var(--dark-mist);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  /* Meridian preview */
+  .preview--meridian {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: var(--dark-border);
+    height: 100%;
+  }
+
+  .preview-fid-col {
+    background: var(--dark-surface);
+    padding: 0.75rem 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .preview-fid-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.48rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .preview-fid-col:nth-child(1) .preview-fid-label { color: var(--dark-mist); }
+  .preview-fid-col:nth-child(2) .preview-fid-label { color: var(--cobalt-light); }
+  .preview-fid-col:nth-child(3) .preview-fid-label { color: var(--violet-light); }
+
+  .preview-lo-block {
+    height: 8px;
+    background: var(--dark-border);
+    border-radius: 2px;
+  }
+
+  .preview-lo-block.short { width: 60%; }
+  .preview-lo-block.medium { width: 80%; }
+
+  .preview-mid-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.2rem 0.3rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 2px;
+    font-size: 0.5rem;
+    color: var(--dark-cloud);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .preview-mid-pill {
+    font-size: 0.42rem;
+    padding: 0.04rem 0.2rem;
+    border-radius: 2px;
+  }
+
+  .preview-mid-pill.blue  { background: rgba(43,77,184,0.2); color: var(--cobalt-light); }
+  .preview-mid-pill.amber { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  .preview-mid-pill.red   { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+  .preview-hi-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.2rem 0.3rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 2px;
+    border-left: 2px solid transparent;
+    font-size: 0.5rem;
+    color: var(--dark-cloud);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .preview-hi-row.red   { border-left-color: #ef4444; }
+  .preview-hi-row.amber { border-left-color: #f59e0b; }
+
+  /* Hover overlay */
+  .work-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(20,24,40,0.85) 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem 1.25rem;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .work-card:hover .work-card-overlay { opacity: 1; }
+
+  .work-card-overlay-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: white;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .work-card-overlay-text::after {
+    content: '→';
+    transition: transform 0.2s ease;
+  }
+
+  .work-card:hover .work-card-overlay-text::after {
+    transform: translateX(3px);
+  }
+
+  .work-card-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .work-card-service {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+  }
+
+  .work-card-service.cobalt {
+    background: var(--cobalt-tint);
+    color: var(--tag-cobalt-text);
+    border: 1px solid rgba(43,77,184,0.15);
+  }
+
+  .work-card-service.violet {
+    background: var(--violet-tint);
+    color: var(--tag-violet-text);
+    border: 1px solid rgba(73,48,176,0.15);
+  }
+
+  .work-card-title {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-weight: 300;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .work-card-title em {
+    font-style: italic;
+    color: var(--violet);
+  }
+
+  .work-card-desc {
+    font-size: 0.85rem;
+    color: var(--ash);
+    line-height: 1.65;
+  }
+
+  /* ── ABOUT ── */
+  .section--about {
+    background: var(--dove);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .about-headline {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+
+  .about-headline em {
+    font-style: italic;
+    color: var(--violet);
+  }
+
+  .about-body p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--ash);
+    margin-bottom: 1rem;
+  }
+
+  .about-body p:last-child { margin-bottom: 0; }
+
+  .about-credentials {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--slate);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .credential-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--slate);
+  }
+
+  .credential-row:last-child { border-bottom: none; }
+
+  .credential-key {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ash);
+    padding: 0.85rem 0.75rem;
+    background: var(--fog);
+    border-right: 1px solid var(--slate);
+    display: flex;
+    align-items: center;
+  }
+
+  .credential-val {
+    font-size: 0.82rem;
+    color: var(--ink);
+    padding: 0.85rem 1rem;
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: var(--dark-void);
+    border-top: 1px solid var(--dark-border);
+    padding: 2.5rem 4rem;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-wordmark {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.95rem;
+    letter-spacing: -0.02em;
+    color: var(--dark-cloud);
+    text-decoration: none;
+  }
+
+  .footer-wordmark .plus { color: var(--violet-light); }
+
+  .footer-email {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--dark-mist);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .footer-email:hover { color: var(--cobalt-light); }
+
+  .footer-email::before {
+    content: '→';
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+  }
+
+  .footer-email:hover::before { transform: translateX(3px); }
+
+  .footer-copy {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--dark-mist);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── DARK MODE additions ── */
+  @media (prefers-color-scheme: dark) {
+    .section--work { background: var(--dark-void); }
+    .work-card { background: var(--dark-surface); border-color: var(--dark-border); }
+    .work-card:hover { border-color: var(--cobalt-light); box-shadow: 0 8px 32px rgba(123,154,232,0.1); }
+    .work-card-title { color: var(--dark-cloud); }
+    .work-card-title em { color: var(--violet-light); }
+    .work-card-desc { color: var(--dark-mist); }
+    .section--about { background: var(--dark-surface); }
+    .about-headline { color: var(--dark-cloud); }
+    .about-headline em { color: var(--violet-light); }
+    .about-body p { color: var(--dark-mist); }
+    .about-credentials { border-color: var(--dark-border); }
+    .credential-row { border-color: var(--dark-border); }
+    .credential-key { background: var(--dark-void); color: var(--dark-mist); border-color: var(--dark-border); }
+    .credential-val { color: var(--dark-cloud); }
+    .section-eyebrow { color: var(--cobalt-light); }
+    .section-eyebrow::before { background: var(--cobalt-light); }
+    .section--work .section-eyebrow { color: var(--cobalt-light); }
+    .section--work .section-eyebrow::before { background: var(--cobalt-light); }
+    .section--about .section-eyebrow { color: var(--cobalt-light); }
+    .section--about .section-eyebrow::before { background: var(--cobalt-light); }
+    .work-card-service.cobalt { background: #1A2440; color: var(--cobalt-light); border-color: rgba(123,154,232,0.2); }
+    .work-card-service.violet { background: #1E1838; color: var(--violet-light); border-color: rgba(152,128,224,0.2); }
+  }
+
+  /* ── RESPONSIVE ── */
+  /* InternMatch preview */
+  .preview--internmatch {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    gap: 0.5rem;
+    height: 100%;
+    justify-content: space-between;
+  }
+
+  .preview-match-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+  }
+
+  .preview-match-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--cobalt-light);
+    letter-spacing: 0.06em;
+  }
+
+  .preview-match-score {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.52rem;
+    padding: 0.06rem 0.3rem;
+    border-radius: 2px;
+    background: rgba(73,48,176,0.2);
+    color: var(--violet-light);
+  }
+
+  .preview-match-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    background: rgba(255,255,255,0.04);
+    border-radius: 3px;
+  }
+
+  .preview-match-ring {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  .preview-match-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .preview-match-role {
+    font-size: 0.58rem;
+    color: var(--dark-cloud);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .preview-match-type {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.46rem;
+    padding: 0.04rem 0.22rem;
+    border-radius: 2px;
+    background: rgba(43,77,184,0.2);
+    color: var(--cobalt-light);
+    display: inline-block;
+    margin-top: 0.1rem;
+  }
+
+  .preview-seed-badge {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    background: rgba(73,48,176,0.15);
+    border: 1px solid rgba(152,128,224,0.2);
+    border-radius: 3px;
+  }
+
+  .preview-seed-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.48rem;
+    color: var(--violet-light);
+    letter-spacing: 0.06em;
+  }
+
+  .preview-seed-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--dark-cloud);
+    font-weight: 500;
+    margin-left: auto;
+  }
+
+  @media (max-width: 768px) {
+    .section { padding: 5rem 2rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .work-grid { grid-template-columns: 1fr; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .site-footer { padding: 2rem; flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="site-wrapper">
+  <nav>
+    <a href="/" class="wordmark">sig<span class="plus">+</span>form</a>
+    <ul class="nav-links">
+      <li><a href="#work">work</a></li>
+      <li><a href="#services">services</a></li>
+      <li><a href="#about">about</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="hero">
+    <p class="hero-eyebrow">product design studio</p>
+
+    <h1 class="hero-headline">
+      <span class="line"><span>Complexity</span></span>
+      <span class="line"><span>made <em>clear,</em></span></span>
+      <span class="line"><span>built to last.</span></span>
+    </h1>
+
+    <p class="hero-body">
+      sig+form designs and engineers product interfaces for high-stakes environments - legal, healthcare, and enterprise SaaS - where the data is complex and getting it wrong is expensive.
+    </p>
+
+    <div class="services-row">
+      <span class="service-tag cobalt">interface.build</span>
+      <span class="service-tag violet">system.build</span>
+      <span class="service-tag neutral">code.build</span>
+    </div>
+
+    <div class="cta-row">
+      <a href="#contact" class="cta-primary">clarify my signal</a>
+      <a href="#work" class="cta-secondary">see the work</a>
+    </div>
+  </main>
+
+  <div class="hero-rule">
+    <div class="rule-line"></div>
+    <span class="rule-text">sigplusform.studio</span>
+    <div class="rule-line"></div>
+  </div>
+
+
+</div>
+
+<!-- ══ SERVICES ══════════════════════════════════════════════ -->
+<section class="section section--services" id="services">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">what we build</p>
+    <div class="services-grid reveal">
+
+      <div class="service-card service-card--cobalt">
+        <span class="service-card-tag">interface.build</span>
+        <h3 class="service-card-headline">Design the wedge.</h3>
+        <p class="service-card-desc">You have something real. It needs to be tangible - to investors, in a demo, at the close. We've helped seed-stage teams make that moment land.</p>
+        <ul class="service-card-caps">
+          <li>Seed and Series A MVP design - zero to investor-ready</li>
+          <li>Wedge clarification through wireframes and shipped UI</li>
+          <li>Demo flows that close - collaborative, dev-alongside process</li>
+          <li>AI decision-support interfaces and agentic product layers</li>
+          <li>Data-dense dashboards for high-stakes environments</li>
+          <li>Role-based views across complex multi-user products</li>
+        </ul>
+        <a href="#work-billing" class="service-card-link">see interface work</a>
+      </div>
+
+      <div class="service-card service-card--violet">
+        <span class="service-card-tag">system.build</span>
+        <h3 class="service-card-headline">Architect the foundation.</h3>
+        <p class="service-card-desc">Your team is shipping fast and rebuilding from scratch every time. We put the system underneath the product so the next feature takes hours, not weeks.</p>
+        <ul class="service-card-caps">
+          <li>Design system architecture from first principles</li>
+          <li>Token structure and component libraries for dev handoff</li>
+          <li>Multi-surface and multi-client component reuse</li>
+          <li>Fidelity-range wireframe systems for discovery and sales</li>
+          <li>Internal tooling that replaces expensive third-party subscriptions</li>
+          <li>Figma systems non-designers can actually operate</li>
+        </ul>
+        <a href="#work-meridian" class="service-card-link">see system work</a>
+      </div>
+
+      <div class="service-card service-card--neutral">
+        <span class="service-card-tag">code.build</span>
+        <h3 class="service-card-headline">Close the gap.</h3>
+        <p class="service-card-desc">Design and engineering in the same hands. No handoff, no translation loss - the thing we design is the thing that ships.</p>
+        <ul class="service-card-caps">
+          <li>Production React and TypeScript frontend</li>
+          <li>Interactive artifacts and explorers for sales and demos</li>
+          <li>Figma plugins and design tooling</li>
+          <li>AI-powered interfaces using the Anthropic API</li>
+          <li>HTML/CSS production overrides for enterprise platforms</li>
+          <li>Rapid prototypes that become the real thing</li>
+        </ul>
+        <a href="#work" class="service-card-link">see the work</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ WORK ═════════════════════════════════════════════════ -->
+<section class="section section--work" id="work">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">selected work</p>
+    <div class="work-grid">
+
+      <!-- Billing Intelligence -->
+      <a class="work-card reveal" id="work-billing" href="billing_explorer.html" target="_blank">
+        <div class="work-card-preview">
+          <div class="preview--billing">
+            <div class="preview-bar">
+              <span class="preview-bar-label">CLIENT HEALTH</span>
+              <span class="preview-bar-count">3 at risk</span>
+            </div>
+            <div class="preview-rows">
+              <div class="preview-row high">
+                <span class="preview-row-name">Client A - Matter 2241</span>
+                <span class="preview-row-pill high">HIGH</span>
+              </div>
+              <div class="preview-row med">
+                <span class="preview-row-name">Client B - Matter 1887</span>
+                <span class="preview-row-pill med">MED</span>
+              </div>
+              <div class="preview-row low">
+                <span class="preview-row-name">Client C - Matter 3102</span>
+                <span class="preview-row-pill low">LOW</span>
+              </div>
+            </div>
+            <div class="preview-draft">
+              <div class="preview-draft-label">AI DRAFT SURFACED</div>
+              <div class="preview-draft-text">"Dear [Client], regarding matter 2241, I wanted to follow up on the outstanding balance..."</div>
+            </div>
+          </div>
+          <div class="work-card-overlay">
+            <span class="work-card-overlay-text">explore the interface</span>
+          </div>
+        </div>
+        <div class="work-card-body">
+          <span class="work-card-service cobalt">interface.build</span>
+          <h3 class="work-card-title">AI that surfaces what attorneys <em>can't see.</em></h3>
+          <p class="work-card-desc">Decision-support system for billing attorneys at global law firms - 5,000+ attorneys, four data sources, one surface.</p>
+        </div>
+      </a>
+
+      <!-- Meridian -->
+      <a class="work-card reveal" id="work-meridian" href="meridian_explorer_sigform.html" target="_blank">
+        <div class="work-card-preview">
+          <div class="preview--meridian">
+            <div class="preview-fid-col">
+              <div class="preview-fid-label">Low</div>
+              <div class="preview-lo-block"></div>
+              <div class="preview-lo-block short"></div>
+              <div class="preview-lo-block medium"></div>
+              <div class="preview-lo-block short"></div>
+              <div class="preview-lo-block"></div>
+            </div>
+            <div class="preview-fid-col">
+              <div class="preview-fid-label">Mid</div>
+              <div class="preview-mid-row">Richardson v. Apex <span class="preview-mid-pill blue">IN PROGRESS</span></div>
+              <div class="preview-mid-row">Westbrook Acq. <span class="preview-mid-pill amber">PENDING</span></div>
+              <div class="preview-mid-row">Employment Dispute <span class="preview-mid-pill red">ACTION</span></div>
+              <div class="preview-mid-row">IP License - TechCorp <span class="preview-mid-pill blue">IN PROGRESS</span></div>
+            </div>
+            <div class="preview-fid-col">
+              <div class="preview-fid-label">High</div>
+              <div class="preview-hi-row red">Employment Dispute <span class="preview-mid-pill red">90+ days</span></div>
+              <div class="preview-hi-row amber">IP License <span class="preview-mid-pill amber">DUE SOON</span></div>
+              <div class="preview-mid-row">Richardson v. Apex <span class="preview-mid-pill blue">12 days</span></div>
+              <div class="preview-mid-row" style="opacity:0.4">Westbrook Acq. <span class="preview-mid-pill" style="background:rgba(155,163,190,0.1);color:#9BA3BE">43 days</span></div>
+            </div>
+          </div>
+          <div class="work-card-overlay">
+            <span class="work-card-overlay-text">explore the system</span>
+          </div>
+        </div>
+        <div class="work-card-body">
+          <span class="work-card-service violet">system.build</span>
+          <h3 class="work-card-title">A system that <em>evolves</em> in the room.</h3>
+          <p class="work-card-desc">Internal wireframe design system for a legaltech consultancy - eight components, three fidelity levels, zero support requests in six months.</p>
+        </div>
+      </a>
+
+      <!-- InternMatch - seed EdTech MVP -->
+      <a class="work-card reveal" id="work-internmatch" href="#" target="_blank">
+        <div class="work-card-preview">
+          <div class="preview--internmatch">
+            <div>
+              <div class="preview-match-header">
+                <span class="preview-match-label">PLACEABILITY SCORE</span>
+                <span class="preview-match-score">LIVE DATA</span>
+              </div>
+              <div class="preview-match-row">
+                <svg class="preview-match-ring" viewBox="0 0 28 28">
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="rgba(123,154,232,0.2)" stroke-width="2.5"/>
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="#7B9AE8" stroke-width="2.5" stroke-dasharray="62 69" stroke-linecap="round" transform="rotate(-90 14 14)"/>
+                  <text x="14" y="18" text-anchor="middle" font-family="IBM Plex Mono" font-size="6" fill="#E8EAF2">94</text>
+                </svg>
+                <div class="preview-match-info">
+                  <div class="preview-match-role">Data Analyst Intern</div>
+                  <span class="preview-match-type">MAJOR MATCH</span>
+                </div>
+              </div>
+              <div class="preview-match-row">
+                <svg class="preview-match-ring" viewBox="0 0 28 28">
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="rgba(123,154,232,0.2)" stroke-width="2.5"/>
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="#7B9AE8" stroke-width="2.5" stroke-dasharray="57 69" stroke-linecap="round" transform="rotate(-90 14 14)"/>
+                  <text x="14" y="18" text-anchor="middle" font-family="IBM Plex Mono" font-size="6" fill="#E8EAF2">88</text>
+                </svg>
+                <div class="preview-match-info">
+                  <div class="preview-match-role">Quant Research Intern</div>
+                  <span class="preview-match-type">MAJOR MATCH</span>
+                </div>
+              </div>
+              <div class="preview-match-row">
+                <svg class="preview-match-ring" viewBox="0 0 28 28">
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="rgba(123,154,232,0.2)" stroke-width="2.5"/>
+                  <circle cx="14" cy="14" r="11" fill="none" stroke="#9880E0" stroke-width="2.5" stroke-dasharray="48 69" stroke-linecap="round" transform="rotate(-90 14 14)"/>
+                  <text x="14" y="18" text-anchor="middle" font-family="IBM Plex Mono" font-size="6" fill="#E8EAF2">74</text>
+                </svg>
+                <div class="preview-match-info">
+                  <div class="preview-match-role">UX Research Intern</div>
+                  <span class="preview-match-type" style="background:rgba(73,48,176,0.2);color:#9880E0">SKILL OVERLAP</span>
+                </div>
+              </div>
+            </div>
+            <div class="preview-seed-badge">
+              <span class="preview-seed-label">OUTCOME</span>
+              <span class="preview-seed-value">Seed funding secured</span>
+            </div>
+          </div>
+          <div class="work-card-overlay">
+            <span class="work-card-overlay-text">explore the case study</span>
+          </div>
+        </div>
+        <div class="work-card-body">
+          <span class="work-card-service cobalt">interface.build</span>
+          <h3 class="work-card-title">From algorithm to <em>investor-ready</em> product.</h3>
+          <p class="work-card-desc">Seed-stage EdTech - sole designer. A founding team had a working AI model and no product. Discovery, wireframes, and a live-data interface shipped in time for investor demos.</p>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+<section class="section section--about" id="about">
+  <div class="section-inner">
+    <p class="section-eyebrow reveal">the studio</p>
+    <div class="about-grid">
+      <div>
+        <h2 class="about-headline reveal">Built for environments where <em>getting it wrong</em> is expensive.</h2>
+        <div class="about-body reveal">
+          <p>sig+form is a product design studio specializing in high-stakes data environments - legal, healthcare, and enterprise SaaS. We design and engineer interfaces where complexity is the constraint, not the excuse.</p>
+          <p>The work spans zero-to-one products, design systems, AI decision-support interfaces, and production frontend. Every engagement starts with the same question: what does the person on the other side of this screen actually need to do?</p>
+        </div>
+      </div>
+      <div class="about-credentials reveal">
+        <div class="credential-row">
+          <span class="credential-key">Verticals</span>
+          <span class="credential-val">Legal · Healthcare · Enterprise SaaS</span>
+        </div>
+        <div class="credential-row">
+          <span class="credential-key">Shipped</span>
+          <span class="credential-val">23+ platforms across legaltech, healthtech, edtech</span>
+        </div>
+        <div class="credential-row">
+          <span class="credential-key">Stack</span>
+          <span class="credential-val">Figma · React · TypeScript · Supabase · Cursor · Anthropic API</span>
+        </div>
+        <div class="credential-row">
+          <span class="credential-key">Based</span>
+          <span class="credential-val">Seattle, WA - available remotely</span>
+        </div>
+        <div class="credential-row">
+          <span class="credential-key">Funded</span>
+          <span class="credential-val">2 seed-stage products that closed funding</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════ -->
+<footer class="site-footer" id="contact">
+  <a href="/" class="footer-wordmark">sig<span class="plus">+</span>form</a>
+  <a href="mailto:hello@sigplusform.studio" class="footer-email">hello@sigplusform.studio</a>
+  <span class="footer-copy">© 2026 sig+form</span>
+</footer>
+
+<script>
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 });
+revealEls.forEach(el => revealObserver.observe(el));
+
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+
+let W, H, particles, tick = 0;
+let mouse = { x: -9999, y: -9999 };
+
+let scope = { x: 0, y: 0, targetX: 0, targetY: 0, r: 130, hover: false, hoverT: 0, born: false };
+let introT = 0;
+
+const isDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+const C = {
+  cobaltLight: '123,154,232',
+  cobaltDark:  '43,77,184',
+  violetLight: '152,128,224',
+  violetDark:  '73,48,176',
+  mixLight:    '58,62,180',
+  mixDark:     '137,141,208',
+};
+const cobalt = () => isDark() ? C.cobaltLight : C.cobaltDark;
+const violet = () => isDark() ? C.violetLight : C.violetDark;
+const mix    = () => isDark() ? C.mixDark     : C.mixLight;
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  scope.x = scope.targetX = W * 0.78;
+  scope.y = scope.targetY = H * 0.32;
+  scope.born = false;
+  introT = 0;
+  init();
+}
+
+function init() {
+  const count = Math.floor((W * H) / 22000);
+  particles = Array.from({ length: count }, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    ox: 0, oy: 0,
+    vx: (Math.random() - 0.5) * 0.22,
+    vy: (Math.random() - 0.5) * 0.22,
+    r: Math.random() * 1.6 + 0.6,
+    hue: Math.random() < 0.5 ? 'cobalt' : 'violet',
+    phase: Math.random() * Math.PI * 2
+  }));
+}
+
+window.addEventListener('mousemove', e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  const dx = e.clientX - scope.x;
+  const dy = e.clientY - scope.y;
+  scope.hover = Math.sqrt(dx*dx + dy*dy) < scope.r + 20;
+});
+window.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; scope.hover = false; });
+
+function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+function clamp(v,a,b) { return Math.max(a, Math.min(b, v)); }
+
+function drawScope(progress, hoverT) {
+  const dark = isDark();
+  const cx = scope.x, cy = scope.y;
+  const scale = 1 + hoverT * 0.28;
+  const R  = scope.r * scale;
+  const R2 = R * 0.62;
+  const R3 = R * 0.18;
+  const baseRing  = 0.45 + hoverT * 0.45;
+  const baseCross = 0.55 + hoverT * 0.40;
+  const baseBrkt  = 0.50 + hoverT * 0.45;
+  const baseGrid  = 0.22 + hoverT * 0.65;
+  const strokeW   = 0.8  + hoverT * 1.0;
+  const gridStroke = 0.6 + hoverT * 0.9;
+  const col   = dark ? C.cobaltLight : C.cobaltDark;
+  const vcol  = dark ? C.violetLight : C.violetDark;
+
+  ctx.save();
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.clip();
+  const gridSpacing = 28 * scale;
+  ctx.strokeStyle = `rgba(${col},${baseGrid})`;
+  ctx.lineWidth = gridStroke;
+  const startX = cx - R - (cx % gridSpacing);
+  for (let gx = startX; gx < cx + R; gx += gridSpacing) {
+    ctx.beginPath(); ctx.moveTo(gx, cy - R); ctx.lineTo(gx, cy + R); ctx.stroke();
+  }
+  const startY = cy - R - (cy % gridSpacing);
+  for (let gy = startY; gy < cy + R; gy += gridSpacing) {
+    ctx.beginPath(); ctx.moveTo(cx - R, gy); ctx.lineTo(cx + R, gy); ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, -Math.PI/2, -Math.PI/2 + Math.PI * 2 * Math.min(progress * 1.2, 1));
+  ctx.strokeStyle = `rgba(${vcol},${baseRing * 0.7})`;
+  ctx.lineWidth = strokeW;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, R2, -Math.PI/2, -Math.PI/2 + Math.PI * 2 * Math.min((progress - 0.15) * 1.3, 1));
+  ctx.strokeStyle = `rgba(${col},${baseRing * 0.6})`;
+  ctx.lineWidth = strokeW * 0.8;
+  ctx.stroke();
+
+  if (progress > 0.5) {
+    const cp = clamp((progress - 0.5) * 4, 0, 1);
+    ctx.beginPath();
+    ctx.arc(cx, cy, R3, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(${col},${baseRing * 0.5 * cp})`;
+    ctx.lineWidth = strokeW * 0.6;
+    ctx.stroke();
+  }
+
+  const crossExt = R + 28 * scale;
+  const crossProgress = clamp((progress - 0.1) * 1.5, 0, 1);
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - crossExt * crossProgress);
+  ctx.lineTo(cx, cy + crossExt * crossProgress);
+  ctx.strokeStyle = `rgba(${col},${baseCross * 0.7})`;
+  ctx.lineWidth = strokeW * 0.75;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx - crossExt * crossProgress, cy);
+  ctx.lineTo(cx + crossExt * crossProgress, cy);
+  ctx.strokeStyle = `rgba(${col},${baseCross * 0.7})`;
+  ctx.lineWidth = strokeW * 0.75;
+  ctx.stroke();
+
+  const bktProgress = clamp((progress - 0.3) * 2, 0, 1);
+  const bkt = R * 0.28 * bktProgress;
+  const bktOff = R * 0.72;
+  const corners = [
+    [cx - bktOff, cy - bktOff, 1, 1],
+    [cx + bktOff, cy - bktOff, -1, 1],
+    [cx - bktOff, cy + bktOff, 1, -1],
+    [cx + bktOff, cy + bktOff, -1, -1],
+  ];
+  ctx.strokeStyle = `rgba(${col},${baseBrkt})`;
+  ctx.lineWidth = strokeW;
+  corners.forEach(([bx, by, sx, sy]) => {
+    ctx.beginPath();
+    ctx.moveTo(bx + bkt * sx, by);
+    ctx.lineTo(bx, by);
+    ctx.lineTo(bx, by + bkt * sy);
+    ctx.stroke();
+  });
+
+  if (progress > 0.7) {
+    const dp = clamp((progress - 0.7) * 3.3, 0, 1);
+    const dotR = (1.5 + hoverT * 1.5) * dp;
+    [[cx, cy - R - 6*scale],[cx + R + 6*scale, cy],[cx, cy + R + 6*scale],[cx - R - 6*scale, cy]].forEach(([dx,dy]) => {
+      ctx.beginPath();
+      ctx.arc(dx, dy, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${vcol},${baseBrkt * dp})`;
+      ctx.fill();
+    });
+    ctx.beginPath();
+    ctx.arc(cx, cy, dotR * 1.4, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${col},${baseBrkt * dp * 0.8})`;
+    ctx.fill();
+  }
+
+  if (progress > 0.5) {
+    const tp = clamp((progress - 0.5) * 2, 0, 1);
+    const ticks = 36;
+    for (let i = 0; i < ticks; i++) {
+      const angle = (i / ticks) * Math.PI * 2;
+      const isMajor = i % 9 === 0;
+      const tickLen = isMajor ? 10 * scale * tp : 5 * scale * tp;
+      const x1 = cx + Math.cos(angle) * R;
+      const y1 = cy + Math.sin(angle) * R;
+      const x2 = cx + Math.cos(angle) * (R + tickLen);
+      const y2 = cy + Math.sin(angle) * (R + tickLen);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = `rgba(${col},${(isMajor ? baseBrkt : baseBrkt * 0.5) * tp})`;
+      ctx.lineWidth = isMajor ? strokeW * 0.8 : strokeW * 0.4;
+      ctx.stroke();
+    }
+  }
+
+  ctx.restore();
+}
+
+function drawParticles() {
+  const dark = isDark();
+  const maxDist = 180;
+  const mouseInfluenceR = 220;
+  const scopeInfluenceR = scope.r * 1.5;
+
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    const mdx = mouse.x - p.x;
+    const mdy = mouse.y - p.y;
+    const mdist = Math.sqrt(mdx*mdx + mdy*mdy);
+    if (mdist < mouseInfluenceR && mdist > 0) {
+      const force = (1 - mdist / mouseInfluenceR) * 0.012;
+      p.vx += (mdx / mdist) * force;
+      p.vy += (mdy / mdist) * force;
+    }
+    const sdx = scope.x - p.x;
+    const sdy = scope.y - p.y;
+    const sdist = Math.sqrt(sdx*sdx + sdy*sdy);
+    if (scope.hover && sdist < scopeInfluenceR && sdist > 0) {
+      const force = (1 - sdist / scopeInfluenceR) * 0.018 * scope.hoverT;
+      p.vx += (sdx / sdist) * force;
+      p.vy += (sdy / sdist) * force;
+    }
+    const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+    if (speed > 1.2) { p.vx *= 0.94; p.vy *= 0.94; }
+    p.vx += (Math.random() - 0.5) * 0.008;
+    p.vy += (Math.random() - 0.5) * 0.008;
+    p.x += p.vx + Math.sin(tick + p.phase) * 0.05;
+    p.y += p.vy + Math.cos(tick + p.phase * 0.7) * 0.05;
+    if (p.x < -10) p.x = W + 10;
+    if (p.x > W + 10) p.x = -10;
+    if (p.y < -10) p.y = H + 10;
+    if (p.y > H + 10) p.y = -10;
+
+    const inScope = sdist < scope.r * (1 + scope.hoverT * 0.28);
+    const dotAlpha = inScope
+      ? (dark ? 0.45 + scope.hoverT * 0.4 : 0.55 + scope.hoverT * 0.35)
+      : (dark ? 0.25 : 0.30);
+    const pRadius = inScope ? p.r * (1 + scope.hoverT * 0.6) : p.r;
+    const color = p.hue === 'cobalt' ? cobalt() : violet();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, pRadius, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${color},${dotAlpha})`;
+    ctx.fill();
+
+    for (let j = i + 1; j < particles.length; j++) {
+      const q = particles[j];
+      const dx = q.x - p.x, dy = q.y - p.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < maxDist) {
+        const bothInScope = inScope && (Math.sqrt((scope.x-q.x)**2+(scope.y-q.y)**2) < scope.r * (1 + scope.hoverT * 0.28));
+        const baseAlpha = bothInScope
+          ? (dark ? 0.18 + scope.hoverT * 0.5 : 0.22 + scope.hoverT * 0.55)
+          : (dark ? 0.08 : 0.10);
+        const alpha = baseAlpha * (1 - dist / maxDist);
+        const lColor = (p.hue === 'cobalt' && q.hue === 'cobalt') ? cobalt()
+          : (p.hue === 'violet' && q.hue === 'violet') ? violet() : mix();
+        const lWidth = bothInScope ? 0.7 + scope.hoverT * 0.8 : 0.5;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = `rgba(${lColor},${alpha})`;
+        ctx.lineWidth = lWidth;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  scope.hoverT += ((scope.hover ? 1 : 0) - scope.hoverT) * 0.06;
+  const tickSpeed = 0.002 + scope.hoverT * 0.006;
+  tick += tickSpeed;
+  const introSpeed = 0.0005 + scope.hoverT * 0.0035;
+  introT = Math.min(introT + introSpeed, 1);
+  const floatX = Math.sin(tick * 0.3) * 18;
+  const floatY = Math.cos(tick * 0.22) * 12;
+  scope.x += (scope.targetX + floatX - scope.x) * 0.04;
+  scope.y += (scope.targetY + floatY - scope.y) * 0.04;
+  drawParticles();
+  drawScope(easeInOut(introT), scope.hoverT);
+  requestAnimationFrame(draw);
+}
+
+window.addEventListener('resize', resize);
+resize();
+draw();
+</script>
+
+<style>
+  .back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 100;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: var(--dark-mist);
+    background: var(--dark-surface);
+    border: 1px solid var(--dark-border);
+    border-radius: 3px;
+    padding: 0.5rem 0.85rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    transition: opacity 0.3s ease, transform 0.3s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .back-to-top:hover {
+    color: var(--cobalt-light);
+    border-color: var(--cobalt-light);
+  }
+
+  .back-to-top::before {
+    content: '↑';
+    font-size: 0.7rem;
+  }
+</style>
+
+<a href="#" class="back-to-top" id="backToTop" aria-label="Back to top">top</a>
+
+<script>
+  const backToTop = document.getElementById('backToTop');
+  const heroHeight = window.innerHeight;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > heroHeight * 0.6) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
+    }
+  });
+
+  backToTop.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
